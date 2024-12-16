@@ -14,5 +14,5 @@ echo "VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION}" >> /app/.env
 # Log indicando que o .env foi gerado
 echo ".env gerado com sucesso!"
 
-# Executando o comando da sua aplicação
+# Executando o comando da sua aplicação (no caso, o Nginx)
 exec "$@"
