@@ -15,8 +15,8 @@ FROM nginx:latest
 # Copie o script de entrada para manipular variáveis
 #COPY ./img /usr/share/nginx/html/img
 
-WORKDIR /usr/share/nginx/html
-COPY --from=build /app/dist .
+# WORKDIR /usr/share/nginx/html
+# COPY --from=build /app/dist .
 
 # Copie o script de entrada para manipular variáveis
 COPY ./entrypoint.sh /entrypoint.sh
