@@ -15,9 +15,6 @@ RUN npm run build
 # Etapa 2: Usar a imagem do Nginx para servir o projeto compilado
 FROM nginx:latest
 
-# Copiar arquivos compilados do Node.js para o diretório do Nginx
-COPY --from=build /app/dist /usr/share/nginx/html
-
 # Copiar o script de entrada
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
