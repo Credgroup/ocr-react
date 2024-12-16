@@ -1,3 +1,4 @@
+# Etapa 1: Construção com Node.js
 FROM node:latest AS build
 
 WORKDIR /app
@@ -14,15 +15,19 @@ RUN npm run build
 # Etapa 2: Usar a imagem do Nginx para servir o projeto compilado
 FROM nginx:latest
 
-WORKDIR /usr/share/nginx/html
-COPY --from=build /app/dist .
+# Copiar arquivos compilados do Node.js para o diretório do Nginx
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copie o script de entrada para manipular variáveis
+# Copiar a configuração personalizada do Nginx (se necessário)
+COPY ./nginx.conf /etc/nginx/nginx.conf
+
+# Copiar o script de entrada
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Executar o script de entrada no momento de inicialização do container
 ENTRYPOINT ["/entrypoint.sh"]
 
+# Expor a porta 80 para o Nginx
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

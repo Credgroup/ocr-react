@@ -10,4 +10,4 @@ services:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-development}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-XXX}
     ports:
-      - "8036:5173"
+      - "8036:80"
