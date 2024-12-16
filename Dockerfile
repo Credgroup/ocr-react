@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 # Etapa 2: Usar a imagem do Nginx para servir o projeto compilado
-FROM nginx:latest
+# FROM nginx:latest
 
 # Copiar o script de entrada
 COPY ./entrypoint.sh /entrypoint.sh
@@ -24,4 +24,5 @@ ENTRYPOINT ["/entrypoint.sh"]
 
 # Expor a porta 80 para o Nginx
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+CMD [ "npm", "run", "preview" ]
+# CMD ["nginx", "-g", "daemon off;"]
