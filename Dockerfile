@@ -18,9 +18,6 @@ FROM nginx:latest
 # Copiar arquivos compilados do Node.js para o diretório do Nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copiar a configuração personalizada do Nginx (se necessário)
-COPY ./nginx.conf /etc/nginx/nginx.conf
-
 # Copiar o script de entrada
 COPY ./entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
