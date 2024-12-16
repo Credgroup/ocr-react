@@ -22,5 +22,7 @@ RUN chmod +x /app/entrypoint.sh
 # Definir o entrypoint para o script
 ENTRYPOINT ["/app/entrypoint.sh"]
 
+EXPOSE 80
+
 # Comando padrão para rodar a aplicação
 CMD ["npm", "start"]
