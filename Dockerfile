@@ -1,35 +1,22 @@
-# Etapa 1: Usar uma imagem do Node.js para instalar as dependências e compilar o projeto
 FROM node:latest AS build
 
+# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Copia os arquivos do package.json e package-lock.json para dentro do contêiner
 COPY package*.json ./
 
+# Instala as dependências do projeto
 RUN npm install
 
+# Copia todos os arquivos do diretório atual para dentro do contêiner
 COPY . .
 
-# Executar o Gulp para construir o projeto
+# Compila a aplicação React
 RUN npm run build
 
-# Etapa 2: Usar a imagem do Nginx para servir o projeto compilado
-# FROM nginx:latest
-
-# Copie o script de entrada para manipular variáveis
-#COPY ./img /usr/share/nginx/html/img
-
-# WORKDIR /usr/share/nginx/html
-# COPY --from=build /app/dist .
-
-# Copie o script de entrada para manipular variáveis
-COPY ./entrypoint.sh /entrypoint.sh
-
-RUN chmod +x /entrypoint.sh
-
-# Executar o script de entrada no momento de inicialização do container
-ENTRYPOINT ["/entrypoint.sh"]
-
+# Expõe a porta 3000 para fora do contêiner
 EXPOSE 5173
 
+# Define o comando que será executado quando o contêiner for iniciado
 CMD [ "npm", "run", "preview" ]
-# CMD ["nginx", "-g", "daemon off;"]
