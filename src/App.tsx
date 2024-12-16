@@ -1,9 +1,7 @@
-import { Button } from "./components/ui/button";
-
 export default function App() {
   return (
     <>
-      <Button>Hello!</Button>
+      <h1>Testing sonar</h1>
     </>
   )
 }
