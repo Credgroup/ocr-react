@@ -1,28 +1,29 @@
-# Base da imagem
-FROM node:22
+# Etapa 1: Usar uma imagem do Node.js para instalar as dependências e compilar o projeto
+FROM node:latest AS build
 
-# Diretório de trabalho no container
 WORKDIR /app
-
-# Copiar os arquivos de definição de dependências (package.json e package-lock.json)
 COPY package*.json ./
-
-# Instalar dependências
 RUN npm install
-
-# Copiar o restante dos arquivos do projeto para o diretório de trabalho
 COPY . .
 
-# Copiar o script entrypoint.sh para dentro do container
-COPY entrypoint.sh /app/entrypoint.sh
+# Executar o Gulp para construir o projeto
+RUN npm build
 
-# Garantir que o script seja executável
-RUN chmod +x /app/entrypoint.sh
+# Etapa 2: Usar a imagem do Nginx para servir o projeto compilado
+FROM nginx:latest
 
-# Definir o entrypoint para o script
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Copie o script de entrada para manipular variáveis
+#COPY ./img /usr/share/nginx/html/img
+
+WORKDIR /usr/share/nginx/html
+COPY --from=build /app/dist .
+
+# Copie o script de entrada para manipular variáveis
+COPY ./entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Executar o script de entrada no momento de inicialização do container
+ENTRYPOINT ["/entrypoint.sh"]
 
 EXPOSE 80
-
-# Comando padrão para rodar a aplicação
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]
