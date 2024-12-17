@@ -15,6 +15,7 @@ console.log("imageVersion:", imageVersion)
       <p>Ambiente: {environment}</p>
       <p>Versão da Imagem: {imageVersion}</p>
       <p>SHOW DE BOLILSONS (teste)</p>
+      <button>Teste</button>
     </>
   );
 };

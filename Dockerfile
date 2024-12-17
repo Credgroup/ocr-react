@@ -1,7 +1,7 @@
 # Etapa 1: Build do App com Vite
 FROM node:latest AS builder
 
-# Define as variáveis para o build (essas variáveis serão passadas via --build-arg)
+# Define as variáveis para o build
 ARG VITE_ENVIRONMENT_VARIABLE
 ARG VITE_IMAGE_VERSION
 
