@@ -13,4 +13,4 @@ services:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
     ports:
-      - "8036:80"
+      - "8038:80"
