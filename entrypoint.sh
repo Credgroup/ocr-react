@@ -8,10 +8,12 @@ declare -A ENV_VARS=(
 
 # Função para escrever as variáveis no arquivo .env
 write_env_file() {
-  echo "Gerando arquivo .env a partir das variáveis do ambiente..."
+  echo "Removendo arquivo .env existente, se houver, e criando um novo..."
 
-  # Limpa o arquivo .env caso já exista
-  > .env
+  # Remove o arquivo .env se já existir
+  rm -f .env
+
+  echo "Gerando arquivo .env a partir das variáveis do ambiente..."
 
   # Itera sobre o array e escreve no arquivo .env
   for var in "${!ENV_VARS[@]}"; do
