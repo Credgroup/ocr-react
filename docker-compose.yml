@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   ocr-react:
+    image: ":${VITE_IMAGE_VERSION}"
     build:
       context: .
       dockerfile: Dockerfile
