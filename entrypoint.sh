@@ -2,7 +2,7 @@
 
 # Defina as variáveis de ambiente que você quer no .env
 declare -A ENV_VARS=(
-  ["VITE_ENV"]=$VITE_ENVIRONMENT_VARIABLE
+  ["VITE_ENVIRONMENT_VARIABLE"]=$VITE_ENVIRONMENT_VARIABLE
   ["VITE_IMAGE_VERSION"]=$VITE_IMAGE_VERSION
 )
 

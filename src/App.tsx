@@ -1,9 +1,8 @@
 export default function App() {
 
-// Acesse as variáveis com o prefixo VITE_
 console.log("teste bacana:")
-console.log(import.meta.env.VITE_ENVIRONMENT_VARIABLE); // "development"
-console.log(import.meta.env.VITE_IMAGE_VERSION); // Exemplo: XXX
+console.log(import.meta.env.VITE_ENVIRONMENT_VARIABLE);
+console.log(import.meta.env.VITE_IMAGE_VERSION);
 
 const environment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
 const imageVersion = import.meta.env.VITE_IMAGE_VERSION;
