@@ -14,6 +14,7 @@ console.log("imageVersion:", imageVersion)
       <h1>Aplicação React com Vite</h1>
       <p>Ambiente: {environment}</p>
       <p>Versão da Imagem: {imageVersion}</p>
+      <p>SHOW DE BOLILSONS (teste)</p>
     </>
   );
 };
