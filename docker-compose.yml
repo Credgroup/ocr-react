@@ -6,9 +6,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        VITE_ENVIRONMENT_VARIABLE: ${VITE_ENVIRONMENT_VARIABLE:-default_value}
-        VITE_IMAGE_VERSION: ${VITE_IMAGE_VERSION:-noversion}
     environment:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
