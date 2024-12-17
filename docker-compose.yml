@@ -9,6 +9,7 @@ services:
       args:
         VITE_ENVIRONMENT_VARIABLE: ${VITE_ENVIRONMENT_VARIABLE:-default_value}
         VITE_IMAGE_VERSION: ${VITE_IMAGE_VERSION:-noversion}
+    pull_policy: build
     environment:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
