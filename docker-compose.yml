@@ -1,13 +1,13 @@
-version: '1.0'
+version: '3.8'
 
 services:
   ocr-react:
-    image: "ocr-react:${VITE_IMAGE_VERSION}"
+    image: "ocr-react:${VITE_IMAGE_VERSION:-latest}"
     build:
-      context: . 
+      context: .
       dockerfile: Dockerfile
     environment:
-      - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-development}
-      - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-XXX}
+      - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-latest}
+      - VITE_ENV=${VITE_ENV:-development}
     ports:
       - "8036:80"

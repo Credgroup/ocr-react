@@ -1,5 +1,5 @@
 # Etapa 1: Build do App com Vite
-FROM node:latest AS build
+FROM node:latest AS builder
 
 # Diretório de trabalho
 WORKDIR /app
