@@ -1,12 +1,15 @@
 # Etapa 1: Build do App com Vite
 FROM node:latest AS builder
 
+# Define as variáveis para o build (essas variáveis serão passadas via --build-arg)
+ARG VITE_ENVIRONMENT_VARIABLE
+ARG VITE_IMAGE_VERSION
+
 # Diretório de trabalho
 WORKDIR /app
 
 # Copia os arquivos necessários
 COPY package.json ./
-
 COPY package-lock.json ./
 
 # Instala as dependências
