@@ -1,21 +1,38 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import useAuthStore from "./stores/authentication";
+import PageGuard from "./pages/PageGuard";
+import DocsPage from "./pages/DocsPage";
+
 export default function App() {
-
-console.log("teste bacana:")
-console.log(import.meta.env.VITE_ENVIRONMENT_VARIABLE);
-console.log(import.meta.env.VITE_IMAGE_VERSION);
-
-const environment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
-const imageVersion = import.meta.env.VITE_IMAGE_VERSION;
-console.log("environment:", environment)
-console.log("imageVersion:", imageVersion)
+  const auth = useAuthStore((state) => state.auth);
+  // http://localhost:5173/?auth={"name":"alisson","id":123}
 
   return (
-    <>
-      <h1>Aplicação React com Vite</h1>
-      <p>Ambiente: {environment}</p>
-      <p>Versão da Imagem: {imageVersion}</p>
-      <p>SHOW DE BOLILSONS (teste)</p>
-      <button>Teste</button>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route
+          path="/*"
+          element={
+            <>
+              <p>Not Found</p>
+            </>
+          }
+        />
+        <Route
+          path="/docs"
+          element={<PageGuard Page={DocsPage} auth={auth} />}
+        />
+        <Route
+          path="/authdenied"
+          element={
+            <>
+              <p>Não autorizado</p>
+            </>
+          }
+        />
+      </Routes>
+    </Router>
   );
-};
+}
