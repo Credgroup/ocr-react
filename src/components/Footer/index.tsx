@@ -1,5 +1,4 @@
 import { ScreenContainer, SmallContainer } from "../Layout/Conainer";
-import { FiPhone, FiMail } from "react-icons/fi";
 import { FooterData } from "@/types";
 
 type FooterProps = FooterData;
@@ -33,16 +32,12 @@ export default function Footer({
             {contacts &&
               contacts.map((item, i) =>
                 item.type == "telefone" ? (
-                  <li className="hover:underline">
-                    <a href={`mailto:${item.content}`} key={item.content + i}>
-                      {item.content}
-                    </a>
+                  <li className="hover:underline" key={item.content + i}>
+                    <a href={`mailto:${item.content}`}>{item.content}</a>
                   </li>
                 ) : (
-                  <li className="hover:underline">
-                    <a href={`tel:${item.content}`} key={item.content + i}>
-                      {item.content}
-                    </a>
+                  <li className="hover:underline" key={item.content + i}>
+                    <a href={`tel:${item.content}`}>{item.content}</a>
                   </li>
                 )
               )}
