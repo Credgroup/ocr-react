@@ -1,4 +1,4 @@
-import { FiEye, FiMoreVertical, FiPlus, FiUpload } from "react-icons/fi";
+import { FiEye, FiPlus, FiUpload } from "react-icons/fi";
 import { Button } from "../ui/button";
 
 type DocItemActionButtonsType =
