@@ -1,11 +1,13 @@
 import Avatar from "@/components/Avatar";
-import DocItem from "@/components/DocItem";
+import DocList from "@/components/DocList";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { ScreenContainer, SmallContainer } from "@/components/Layout/Conainer";
+import useAuthStore from "@/stores/authentication";
 import { FiCalendar, FiShield } from "react-icons/fi";
 
 export default function DocsPage() {
+  const auth = useAuthStore((state) => state.auth);
   return (
     <ScreenContainer className="min-h-screen bg-white-200">
       <Header
@@ -15,9 +17,9 @@ export default function DocsPage() {
           backgroundType: "img",
         }}
       />
-      <SmallContainer className="mb-12">
+      <SmallContainer className="mb-12 px-4 md:px-0">
         <Avatar />
-        <h1 className="text-2xl font-bold leading-none">Olá Luciana Torres!</h1>
+        <h1 className="text-2xl font-bold leading-none">Olá {auth?.name}!</h1>
         <p className="text-base mb-6 mt-3">
           Recebemos a sua solicitação de uso da cobertura{" "}
           <span>
@@ -46,7 +48,7 @@ export default function DocsPage() {
             </div>
           </div>
         </div>
-        <DocItem />
+        <DocList />
       </SmallContainer>
       <Footer
         address="Avenida dos Autonomistas, nº 1496, Vila Yara, Osasco/SP - CEP 06.020-902"
