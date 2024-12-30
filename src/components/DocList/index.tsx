@@ -1,19 +1,24 @@
 import useDocStore from "@/stores/useDocStore";
 import { useEffect, useState } from "react";
 import DocItem from "../DocItem";
-import UploadModal from "../UploadModal.tsx"; // Importando o modal de upload
-import { updateDoc } from "@/types/index.ts";
+import UploadModal from "../UploadModal.tsx";
+import { Doc, updateDoc } from "@/types/index.ts";
 import { FileIconType } from "@/types";
 import { log } from "@/lib/utils.ts";
 import PreviewModal from "../PreviewModal/index.tsx";
+import { OptionMobileModal } from "../OptionsModal/index.tsx";
+import { CameraModal } from "../CameraModal/index.tsx";
 
 export default function DocList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<Doc | null>(null);
   const docs = useDocStore((state) => state.docs);
   const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false);
   const updateDocFile = useDocStore((state) => state.updateDocFile);
   const [previewFile, setPreviewFile] = useState<File | null>(null);
+  const [isOptionModalOpen, setIsOptionModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -33,6 +38,14 @@ export default function DocList() {
     log(id);
     setSelectedDocId(id);
     setIsModalOpen(true);
+  };
+  const openOptionModal = (doc: Doc) => {
+    log(doc);
+    setSelectedDocId(doc.id);
+    if (doc.file) {
+      setSelectedDoc(doc);
+    }
+    setIsOptionModalOpen(true);
   };
 
   const formatFileSize = (sizeInBytes: number): string => {
@@ -79,6 +92,7 @@ export default function DocList() {
       log("Arquivo carregado:", file);
     }
     setIsModalOpen(false);
+    setSelectedDoc(null);
   };
 
   const openPreviewModal = (img: File | null) => {
@@ -94,19 +108,54 @@ export default function DocList() {
       {/* Modal de Upload */}
       <UploadModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedDoc(null);
+        }}
         onUpload={handleUpload}
       />
 
       {/* Modal de Preview */}
       <PreviewModal
         isOpen={isPreviewModalOpen}
-        onClose={() => setIsPreviewModalOpen(false)}
+        onClose={() => {
+          setIsPreviewModalOpen(false);
+          setSelectedDoc(null);
+        }}
         file={previewFile}
       />
 
+      <OptionMobileModal
+        isModalOpen={isOptionModalOpen}
+        setIsModalOpen={() => {
+          setIsOptionModalOpen(false);
+          setSelectedDoc(null);
+        }}
+        type={selectedDoc?.type || ""}
+        actions={[
+          () => {
+            setIsModalOpen(true);
+            setIsOptionModalOpen(false);
+          },
+          () => {
+            setIsPreviewModalOpen(true);
+            openPreviewModal(selectedDoc?.file || null);
+            setIsOptionModalOpen(false);
+          },
+          () => {
+            setIsCameraModalOpen(true);
+            setIsOptionModalOpen(false);
+          },
+        ]}
+      />
+
+      <CameraModal
+        isModalOpen={isCameraModalOpen}
+        setIsModalOpen={() => setIsCameraModalOpen(false)}
+      />
+
       {/* Listando os documentos */}
-      {docs.map((doc) => (
+      {docs?.map((doc) => (
         <DocItem.Root key={doc.id}>
           <DocItem.ContentContainer>
             <DocItem.FileIcon
@@ -126,7 +175,17 @@ export default function DocList() {
               />
             )}
             {isMobile ? (
-              <DocItem.Action type="option-mobile" dispatch={() => {}} />
+              doc.file ? (
+                <DocItem.Action
+                  type="option-mobile"
+                  dispatch={() => openOptionModal(doc)} // Alterna a visibilidade do popover para este documento
+                />
+              ) : (
+                <DocItem.Action
+                  type="upload-mobile"
+                  dispatch={() => openOptionModal(doc)} // Alterna a visibilidade do popover para este documento
+                />
+              )
             ) : (
               <DocItem.Action
                 type="upload-destop"

@@ -3,7 +3,7 @@ export type AuthType = {
   id: number;
 };
 
-type FooterContact = {
+export type FooterContact = {
   type: "telefone" | "email";
   content: string;
 };

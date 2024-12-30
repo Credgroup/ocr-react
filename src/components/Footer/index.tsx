@@ -30,6 +30,7 @@ export default function Footer({
             style={{ color: styles.textColor }}
           >
             {contacts &&
+              contacts.length > 0 &&
               contacts.map((item, i) =>
                 item.type == "telefone" ? (
                   <li className="hover:underline" key={item.content + i}>

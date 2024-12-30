@@ -33,6 +33,7 @@ export default function UploadModal({
       console.log("Arquivo carregado:", file);
       onUpload(file); // Atualiza o arquivo no estado global (Zustand)
       onClose(); // Fecha o modal após o upload
+      setFile(null);
     }
   };
 
@@ -62,13 +63,11 @@ export default function UploadModal({
           >
             Upload
           </button>
-          <DialogClose>
-            <button
-              onClick={onClose}
-              className="bg-gray-500 text-white px-4 py-2 rounded"
-            >
-              Cancelar
-            </button>
+          <DialogClose
+            onClick={onClose}
+            className="bg-gray-500 text-white px-4 py-2 rounded"
+          >
+            Cancelar
           </DialogClose>
         </div>
       </DialogContent>

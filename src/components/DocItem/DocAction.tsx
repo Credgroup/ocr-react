@@ -1,4 +1,4 @@
-import { FiEye, FiPlus, FiUpload } from "react-icons/fi";
+import { FiEye, FiMoreVertical, FiPlus, FiUpload } from "react-icons/fi";
 import { Button } from "../ui/button";
 
 type DocItemActionButtonsType =
@@ -30,6 +30,16 @@ export default function DocAction({ type, dispatch }: DocActionProps) {
   }
 
   if (type == "upload-mobile") {
+    return (
+      <Button
+        variant="secondary"
+        size="icon"
+        className="rounded-full"
+        onClick={dispatch ? () => dispatch() : () => {}}
+      >
+        <FiPlus />
+      </Button>
+    );
   }
 
   if (type == "loading") {
@@ -49,7 +59,7 @@ export default function DocAction({ type, dispatch }: DocActionProps) {
         className="rounded-full"
         onClick={dispatch ? () => dispatch() : () => {}}
       >
-        <FiPlus />
+        <FiMoreVertical />
       </Button>
     );
   }
