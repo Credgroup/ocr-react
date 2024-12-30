@@ -5,7 +5,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Camera } from "react-camera-pro";
 
 interface CameraModalProps {
