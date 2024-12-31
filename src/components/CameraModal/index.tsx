@@ -28,34 +28,32 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   // Função para solicitar permissão para acessar a câmera e o microfone
   const requestPermission = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: true })
       .then(() => {
         setHasPermission(true);
         setError(null); // Reseta o erro se a permissão for concedida
       })
       .catch((err) => {
         setHasPermission(false);
-        let errorMessage =
-          "Erro desconhecido ao acessar a câmera ou microfone.";
+        let errorMessage = "Erro desconhecido ao acessar a câmera.";
 
         // Tratamento de erros específicos
         if (
           err.name === "NotFoundError" ||
           err.name === "DevicesNotFoundError"
         ) {
-          errorMessage = "Nenhuma câmera ou microfone foi encontrado.";
+          errorMessage = "Nenhuma câmera foi encontrada.";
         } else if (
           err.name === "NotAllowedError" ||
           err.name === "PermissionDeniedError"
         ) {
-          errorMessage =
-            "Você deve conceder permissão para acessar a câmera e o microfone.";
+          errorMessage = "Você deve conceder permissão para acessar a câmera.";
         } else if (
           err.name === "NotReadableError" ||
           err.name === "TrackStartError"
         ) {
           errorMessage =
-            "Houve um erro ao tentar acessar a câmera ou microfone. Tente novamente.";
+            "Houve um erro ao tentar acessar a câmera. Tente novamente.";
         } else {
           errorMessage = `Erro: ${err.message}`;
         }
