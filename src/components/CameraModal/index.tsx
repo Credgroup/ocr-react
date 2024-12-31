@@ -9,9 +9,7 @@ import { useCallback, useRef, useState, useEffect } from "react";
 import Webcam from "react-webcam";
 
 const videoConstraints = {
-  width: 1280,
-  height: 720,
-  facingMode: "user",
+  facingMode: { exact: "environment" },
 };
 
 interface CameraModalProps {
@@ -113,11 +111,12 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
           ) : !photo ? (
             <Webcam
               ref={cameraRef}
+              width={300}
               screenshotFormat="image/png"
               videoConstraints={videoConstraints}
               style={{
                 width: "320px",
-                aspectRatio: 16 / 9,
+                aspectRatio: 9 / 16,
               }}
             />
           ) : (
