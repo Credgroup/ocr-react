@@ -18,6 +18,9 @@ export default function Home() {
   const docsParam = params.get("docs");
   const themeParams = params.get("theme");
 
+  const enviroment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
+  const appVersion = import.meta.env.VITE_IMAGE_VERSION;
+
   useEffect(() => {
     // Capturar os parâmetros de auth da URL
     if (authParams) {
@@ -61,5 +64,9 @@ export default function Home() {
     navigate("/docs", { replace: true });
   };
 
-  return <p>Pegando dados...</p>;
+  return (
+    <h1>
+      {enviroment} - v{appVersion}
+    </h1>
+  );
 }
