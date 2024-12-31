@@ -5,8 +5,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useRef, useState } from "react";
-import { Camera } from "react-camera-pro";
+import { useCallback, useRef, useState, useEffect } from "react";
+import Webcam from "react-webcam";
+
+const videoConstraints = {
+  width: 1280,
+  height: 720,
+  facingMode: "user",
+};
 
 interface CameraModalProps {
   isModalOpen: boolean;
@@ -14,14 +20,68 @@ interface CameraModalProps {
 }
 
 export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
-  const cameraRef = useRef<any>(null); // Usando `any` para o ref
+  const cameraRef = useRef<Webcam>(null);
   const [photo, setPhoto] = useState<string | null>(null);
+  const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Função para solicitar permissão para acessar a câmera e o microfone
+  const requestPermission = () => {
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then(() => {
+        setHasPermission(true);
+        setError(null); // Reseta o erro se a permissão for concedida
+      })
+      .catch((err) => {
+        setHasPermission(false);
+        let errorMessage =
+          "Erro desconhecido ao acessar a câmera ou microfone.";
+
+        // Tratamento de erros específicos
+        if (
+          err.name === "NotFoundError" ||
+          err.name === "DevicesNotFoundError"
+        ) {
+          errorMessage = "Nenhuma câmera ou microfone foi encontrado.";
+        } else if (
+          err.name === "NotAllowedError" ||
+          err.name === "PermissionDeniedError"
+        ) {
+          errorMessage =
+            "Você deve conceder permissão para acessar a câmera e o microfone.";
+        } else if (
+          err.name === "NotReadableError" ||
+          err.name === "TrackStartError"
+        ) {
+          errorMessage =
+            "Houve um erro ao tentar acessar a câmera ou microfone. Tente novamente.";
+        } else {
+          errorMessage = `Erro: ${err.message}`;
+        }
+
+        setError(errorMessage);
+        console.error("Erro ao solicitar permissão:", err);
+      });
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      // Solicita permissão toda vez que o modal for aberto
+      requestPermission();
+    }
+  }, [isModalOpen]);
+
+  const capture = useCallback(() => {
+    if (cameraRef.current) {
+      const imageSrc = cameraRef.current.getScreenshot();
+      console.log(imageSrc);
+      setPhoto(imageSrc);
+    }
+  }, []);
 
   const handleTakePhoto = () => {
-    if (cameraRef.current) {
-      const newPhoto = cameraRef.current.takePhoto(); // Método `takePhoto` chamado
-      setPhoto(newPhoto);
-    }
+    capture();
   };
 
   const handleConfirm = () => {
@@ -45,14 +105,21 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
         </DialogDescription>
 
         <div className="flex flex-col items-center gap-4">
-          {!photo ? (
-            <Camera
+          {error && <div className="text-red-500">{error}</div>}
+
+          {!hasPermission ? (
+            <div className="text-center text-red-500">
+              Você precisa conceder permissão para acessar a câmera e o
+              microfone.
+            </div>
+          ) : !photo ? (
+            <Webcam
+              audio={true} // Habilita o microfone
+              height={720}
               ref={cameraRef}
-              aspectRatio={16 / 9}
-              facingMode="user"
-              errorMessages={{
-                noCameraAccessible: "Não foi possível acessar a câmera.",
-              }} // Usando a chave correta
+              screenshotFormat="image/png"
+              width={1280}
+              videoConstraints={videoConstraints}
             />
           ) : (
             <img
@@ -74,6 +141,13 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
               </>
             )}
           </div>
+
+          {/* Botão para solicitar permissão manualmente */}
+          {!hasPermission && !photo && (
+            <Button onClick={requestPermission} variant="secondary">
+              Solicitar Permissão
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>
