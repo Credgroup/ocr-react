@@ -112,12 +112,13 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             </div>
           ) : !photo ? (
             <Webcam
-              audio={true} // Habilita o microfone
-              height={720}
               ref={cameraRef}
               screenshotFormat="image/png"
-              width={1280}
               videoConstraints={videoConstraints}
+              style={{
+                width: "320px",
+                aspectRatio: 16 / 9,
+              }}
             />
           ) : (
             <img
