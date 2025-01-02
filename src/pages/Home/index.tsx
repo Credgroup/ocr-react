@@ -9,9 +9,9 @@ import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
 import { CameraModal } from "@/components/CameraModal";
 
-const videoConstraints = {
-  facingMode: { exact: "environment" },
-};
+// const videoConstraints = {
+//   facingMode: { exact: "environment" },
+// };
 
 export default function Home() {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -98,7 +98,9 @@ export default function Home() {
             width={300}
             height={450}
             screenshotFormat="image/png"
-            videoConstraints={videoConstraints}
+            videoConstraints={{
+              facingMode: { exact: "environment" },
+            }}
             className="border border-red-400"
           />
           <Button onClick={handleTakePhoto}>Tirar Foto</Button>

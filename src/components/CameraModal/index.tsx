@@ -117,7 +117,9 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
                 width={300}
                 height={450}
                 screenshotFormat="image/png"
-                videoConstraints={{ facingMode: { exact: "environment" } }}
+                videoConstraints={{
+                  facingMode: { exact: "environment" },
+                }}
                 className="border border-red-400"
               />
             </>
