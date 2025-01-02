@@ -7,25 +7,42 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Camera } from "@/components/Camera"; // Importe o componente de câmera aqui
+import useDocStore from "@/stores/useDocStore"; // Adicionar import do Zustand
+import { FileIconType } from "@/types";
 
 interface CameraModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
+  docId: string;
 }
 
 export const CameraModal: React.FC<CameraModalProps> = ({
   isModalOpen,
   setIsModalOpen,
+  docId,
 }) => {
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null); // Alterado para File
+  const updateDocFile = useDocStore((state) => state.updateDocFile); // Usar o estado do Zustand
+  const selectedDocId = docId; // ID do documento selecionado
 
-  const handleCapture = (capturedPhoto: string) => {
+  const handleCapture = (capturedPhoto: File) => {
+    // Alterado para File
     setPhoto(capturedPhoto);
   };
 
   const handleConfirm = () => {
-    if (photo) {
-      console.log("Foto capturada (base64):", photo);
+    if (photo && selectedDocId) {
+      // Atualizar o Zustand com o novo arquivo
+      const newDoc = {
+        checked: true,
+        description: `Foto capturada`,
+        file: photo, // Utilizando o File diretamente
+        type: "jpg" as FileIconType, // Defina o tipo conforme necessário
+      };
+
+      updateDocFile(selectedDocId, newDoc); // Atualiza o arquivo no Zustand
+
+      // Fechar o modal e resetar a foto
       setPhoto(null);
       setIsModalOpen(false);
     }
@@ -48,7 +65,7 @@ export const CameraModal: React.FC<CameraModalProps> = ({
             <Camera onCapture={handleCapture} className="w-full" />
           ) : (
             <img
-              src={photo}
+              src={URL.createObjectURL(photo)} // Exibe a imagem capturada
               alt="Preview da Foto"
               className="w-full h-64 object-contain bg-gray-200"
             />

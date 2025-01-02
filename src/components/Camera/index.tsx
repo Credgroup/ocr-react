@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 interface CameraProps {
-  onCapture: (photo: string) => void; // Callback para devolver a foto capturada
+  onCapture: (photo: File) => void; // Alterado para aceitar File
   facingMode?: "user" | "environment"; // Define a câmera: frontal ou traseira
   className?: string; // Classe para estilização
 }
@@ -56,8 +56,20 @@ export const Camera = ({
     const ctx = canvas.getContext("2d");
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const photo = canvas.toDataURL("image/png");
-      onCapture(photo); // Retorna a foto para o callback
+      const photoDataUrl = canvas.toDataURL("image/png");
+
+      // Converter DataURL para File
+      fetch(photoDataUrl)
+        .then((res) => res.blob()) // Obtém o blob da imagem
+        .then((blob) => {
+          const file = new File([blob], "captured-photo.png", {
+            type: "image/png",
+          });
+          onCapture(file); // Passa o File para o callback
+        })
+        .catch((err) =>
+          console.error("Erro ao converter imagem para File:", err)
+        );
     }
   };
 

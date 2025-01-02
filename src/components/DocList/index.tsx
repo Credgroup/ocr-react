@@ -152,6 +152,7 @@ export default function DocList() {
       <CameraModal
         isModalOpen={isCameraModalOpen}
         setIsModalOpen={() => setIsCameraModalOpen(false)}
+        docId={selectedDocId || ""}
       />
 
       {/* Listando os documentos */}
