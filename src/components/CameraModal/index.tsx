@@ -21,7 +21,7 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]); // Armazenar as câmeras
   const [selectedDevice, setSelectedDevice] = useState<string>(""); // Dispositivo selecionado
   const [currentDeviceId, setCurrentDeviceId] = useState<string>(""); // ID do dispositivo atual
-
+  const [stream, setStream] = useState<MediaStream | null>(null);
   // Função para solicitar permissão para acessar a câmera
   const requestPermission = () => {
     navigator.mediaDevices
@@ -30,8 +30,9 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
           facingMode: { exact: "environment" },
         },
       })
-      .then(() => {
+      .then((stremRes) => {
         setHasPermission(true);
+        setStream(stremRes);
         setError(null); // Reseta o erro se a permissão for concedida
       })
       .catch((err) => {
@@ -67,14 +68,21 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   // Função para listar os dispositivos de vídeo disponíveis
   const getDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
-
+    console.log("Esses são todos os devices de midia");
+    console.log(devices);
     // Tenta filtrar entre as câmeras frontal e traseira, se possível
     const videoDevices = devices.filter(
       (device) => device.kind === "videoinput"
     );
-
+    console.log("Esses são os devices de vídeo");
+    console.log(videoDevices);
     // Aqui tentamos pegar os dispositivos com "facingMode" se disponível
     const frontAndBackCameras = videoDevices.filter((device) => {
+      console.log("inspecionando cada camera de cada vez");
+      console.log(device.label);
+      console.log(device.kind);
+      console.log(device.deviceId);
+      console.log(device.groupId);
       return (
         device.label.toLowerCase().includes("front") ||
         device.label.toLowerCase().includes("back")
@@ -97,6 +105,12 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   useEffect(() => {
     if (isModalOpen) {
       getDevices(); // Carregar dispositivos de vídeo quando o modal for aberto
+    } else {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      setStream(null);
+      setHasPermission(false);
     }
   }, [isModalOpen]);
 
@@ -124,6 +138,11 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   };
 
   const handleSwitchCamera = () => {
+    console.log("switch camera");
+    console.log(videoDevices);
+    videoDevices.forEach((item) => {
+      console.log(item);
+    });
     const nextDeviceIndex =
       (videoDevices.findIndex((device) => device.deviceId === currentDeviceId) +
         1) %
