@@ -5,7 +5,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 interface CameraModalProps {
@@ -18,20 +18,21 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [photo, setPhoto] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [deviceId, setDeviceId] = useState<string | null>(null); // ID da câmera selecionada
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
-  // Função para solicitar permissão para acessar a câmera e o microfone
   const requestPermission = () => {
     navigator.mediaDevices
       .getUserMedia({ video: true })
       .then(() => {
         setHasPermission(true);
-        setError(null); // Reseta o erro se a permissão for concedida
+        setError(null);
+        loadDevices(); // Carrega dispositivos ao conceder permissão
       })
       .catch((err) => {
         setHasPermission(false);
         let errorMessage = "Erro desconhecido ao acessar a câmera.";
 
-        // Tratamento de erros específicos
         if (
           err.name === "NotFoundError" ||
           err.name === "DevicesNotFoundError"
@@ -57,18 +58,31 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       });
   };
 
-  // useEffect(() => {
-  //   if (isModalOpen) {
-  //     // Solicita permissão toda vez que o modal for aberto
-  //     // requestPermission();
-  //   }
-  // }, [isModalOpen]);
+  const loadDevices = () => {
+    navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
+      const videoDevices = mediaDevices.filter(
+        (device) => device.kind === "videoinput"
+      );
+      setDevices(videoDevices);
+
+      // Tenta selecionar a câmera traseira automaticamente
+      const backCamera = devices.find(
+        (device) =>
+          device.label.toLowerCase().includes("traseira") ||
+          device.label.toLowerCase().includes("back")
+      );
+
+      if (backCamera) {
+        setDeviceId(backCamera.deviceId);
+      } else if (videoDevices.length > 0) {
+        setDeviceId(videoDevices[0].deviceId); // Seleciona a primeira câmera como fallback
+      }
+    });
+  };
 
   const capture = useCallback(() => {
-    console.log(cameraRef);
     if (cameraRef.current) {
       const imageSrc = cameraRef.current.getScreenshot();
-      console.log(imageSrc);
       setPhoto(imageSrc);
     }
   }, []);
@@ -80,18 +94,20 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const handleConfirm = () => {
     if (photo) {
       console.log("Base64 da foto:", photo);
-      setPhoto(null); // Reseta a foto para novas capturas
-      setIsModalOpen(false); // Fecha o modal
+      setPhoto(null);
+      setIsModalOpen(false);
     }
   };
 
   const handleCancel = () => {
-    setPhoto(null); // Permite tirar uma nova foto
+    setPhoto(null);
   };
 
-  const videoConstraintsVar = {
-    facingMode: { exact: "environment" },
-  };
+  useEffect(() => {
+    if (isModalOpen) {
+      requestPermission();
+    }
+  }, [isModalOpen]);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -106,20 +122,20 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
 
           {!hasPermission ? (
             <div className="text-center text-red-500">
-              Você precisa conceder permissão para acessar a câmera e o
-              microfone.
+              Você precisa conceder permissão para acessar a câmera.
             </div>
           ) : !photo ? (
             <>
-              <h1>hehe</h1>
-              <Webcam
-                ref={cameraRef}
-                width={300}
-                height={450}
-                screenshotFormat="image/png"
-                videoConstraints={videoConstraintsVar}
-                className="border border-red-400"
-              />
+              {deviceId && (
+                <Webcam
+                  ref={cameraRef}
+                  width={300}
+                  height={450}
+                  screenshotFormat="image/png"
+                  videoConstraints={{ deviceId }}
+                  className="border border-red-400"
+                />
+              )}
             </>
           ) : (
             <img
@@ -142,7 +158,6 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             )}
           </div>
 
-          {/* Botão para solicitar permissão manualmente */}
           {!hasPermission && !photo && (
             <Button onClick={requestPermission} variant="secondary">
               Solicitar Permissão
