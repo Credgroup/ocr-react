@@ -1,11 +1,16 @@
 import useAuthStore from "@/stores/authentication";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthType } from "@/types";
 import { log } from "@/lib/utils";
 import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
 import Webcam from "react-webcam";
+import { Button } from "@/components/ui/button";
+
+const videoConstraints = {
+  facingMode: { exact: "environment" },
+};
 
 export default function Home() {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -18,9 +23,23 @@ export default function Home() {
   const authParams = params.get("auth");
   const docsParam = params.get("docs");
   const themeParams = params.get("theme");
+  const [photo, setPhoto] = useState<string | null>(null);
+
+  const cameraRef = useRef<any>(null);
 
   const enviroment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
   const appVersion = import.meta.env.VITE_IMAGE_VERSION;
+  const handleTakePhoto = () => {
+    capture();
+  };
+
+  const capture = useCallback(() => {
+    if (cameraRef.current) {
+      const imageSrc = cameraRef.current.getScreenshot();
+      console.log(imageSrc);
+      setPhoto(imageSrc);
+    }
+  }, []);
 
   useEffect(() => {
     // Capturar os parâmetros de auth da URL
@@ -70,7 +89,22 @@ export default function Home() {
       <h1>
         {enviroment} - v{appVersion}
       </h1>
-      <Webcam />
+      <Webcam
+        ref={cameraRef}
+        width={300}
+        height={450}
+        screenshotFormat="image/png"
+        videoConstraints={videoConstraints}
+        className="border border-red-400"
+      />
+      <Button onClick={handleTakePhoto}>Tirar Foto</Button>
+      {photo && (
+        <img
+          src={photo}
+          alt="Preview da Foto"
+          className="w-full h-64 object-contain bg-gray-200"
+        />
+      )}
     </>
   );
 }
