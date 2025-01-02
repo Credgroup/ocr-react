@@ -21,15 +21,13 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]); // Armazenar as câmeras
   const [selectedDevice, setSelectedDevice] = useState<string>(""); // Dispositivo selecionado
   const [currentDeviceId, setCurrentDeviceId] = useState<string>(""); // ID do dispositivo atual
-  const [stream, setStream] = useState<MediaStream | null>(null); // Para armazenar a stream da câmera
 
-  // Função para solicitar permissão para acessar todas as câmeras
+  // Função para solicitar permissão para acessar a câmera
   const requestPermission = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true }) // Solicita permissão para qualquer dispositivo de vídeo
-      .then((stream) => {
+      .getUserMedia({ video: true })
+      .then(() => {
         setHasPermission(true);
-        setStream(stream); // Armazena a stream da câmera
         setError(null); // Reseta o erro se a permissão for concedida
       })
       .catch((err) => {
@@ -65,21 +63,19 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   // Função para listar os dispositivos de vídeo disponíveis
   const getDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    console.log(devices);
-    // Filtra todos os dispositivos de vídeo
-    const videoDevicesArr = devices.filter(
+
+    // Tenta filtrar entre as câmeras frontal e traseira, se possível
+    const videoDevices = devices.filter(
       (device) => device.kind === "videoinput"
     );
 
-    console.log(videoDevicesArr);
-    // Tenta filtrar entre as câmeras frontal e traseira, se possível
-    const frontAndBackCameras = videoDevicesArr.filter((device) => {
+    // Aqui tentamos pegar os dispositivos com "facingMode" se disponível
+    const frontAndBackCameras = videoDevices.filter((device) => {
       return (
         device.label.toLowerCase().includes("front") ||
         device.label.toLowerCase().includes("back")
       );
     });
-    console.log(frontAndBackCameras);
 
     // Se encontrarmos câmeras frontal e traseira, usamos elas
     if (frontAndBackCameras.length > 0) {
@@ -88,26 +84,15 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       setCurrentDeviceId(frontAndBackCameras[0].deviceId);
     } else {
       // Caso contrário, apenas adicione todas as câmeras encontradas
-      setVideoDevices(videoDevicesArr);
-      setSelectedDevice(videoDevicesArr[0].deviceId);
-      setCurrentDeviceId(videoDevicesArr[0].deviceId);
+      setVideoDevices(videoDevices);
+      setSelectedDevice(videoDevices[0].deviceId);
+      setCurrentDeviceId(videoDevices[0].deviceId);
     }
-
-    console.log(videoDevicesArr);
-    console.log(videoDevices);
   };
 
-  // Iniciar a câmera quando o modal for aberto
   useEffect(() => {
     if (isModalOpen) {
       getDevices(); // Carregar dispositivos de vídeo quando o modal for aberto
-    } else {
-      // Fechar e liberar a câmera quando o modal for fechado
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop()); // Para a stream da câmera
-      }
-      setStream(null); // Limpa a referência da stream
-      setHasPermission(false); // Reseta o estado de permissão
     }
   }, [isModalOpen]);
 
@@ -142,8 +127,6 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
     const nextDeviceId = videoDevices[nextDeviceIndex].deviceId;
     setCurrentDeviceId(nextDeviceId);
     setSelectedDevice(nextDeviceId);
-    console.log(nextDeviceId);
-    console.log(selectedDevice);
   };
 
   return (
