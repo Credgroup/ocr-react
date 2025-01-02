@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-const videoConstraints = {
-  facingMode: { exact: "environment" },
-};
+// const videoConstraints = {
+//   facingMode: { exact: "environment" },
+// };
 
 interface CameraModalProps {
   isModalOpen: boolean;
@@ -113,12 +113,12 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             <>
               <h1>hehe</h1>
               <Webcam
-                ref={cameraRef}
-                width={300}
-                height={450}
-                screenshotFormat="image/png"
-                videoConstraints={videoConstraints}
-                className="border border-red-400"
+              // ref={cameraRef}
+              // width={300}
+              // height={450}
+              // screenshotFormat="image/png"
+              // videoConstraints={videoConstraints}
+              // className="border border-red-400"
               />
             </>
           ) : (
