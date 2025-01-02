@@ -41,6 +41,7 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   };
 
   const handleSwitchCamera = () => {
+    console.log("switch camera");
     const currentIndex = videoDevices.findIndex(
       (device) => device.deviceId === selectedDevice
     );
@@ -65,7 +66,9 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
                 className="w-full h-64"
               />
               {videoDevices.length > 1 && (
-                <Button onClick={handleSwitchCamera}>Trocar Câmera</Button>
+                <Button onClick={handleSwitchCamera} className="z-50">
+                  Trocar Câmera
+                </Button>
               )}
             </>
           ) : (
