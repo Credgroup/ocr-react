@@ -5,7 +5,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
 import Webcam from "react-webcam";
 
 interface CameraModalProps {
@@ -18,11 +18,14 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [photo, setPhoto] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]); // Armazenar as câmeras
+  const [selectedDevice, setSelectedDevice] = useState<string>(""); // Dispositivo selecionado
+  const [currentDeviceId, setCurrentDeviceId] = useState<string>(""); // ID do dispositivo atual
 
-  // Função para solicitar permissão para acessar a câmera e o microfone
+  // Função para solicitar permissão para acessar a câmera
   const requestPermission = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({ video: { deviceId: selectedDevice } })
       .then(() => {
         setHasPermission(true);
         setError(null); // Reseta o erro se a permissão for concedida
@@ -57,18 +60,28 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       });
   };
 
-  // useEffect(() => {
-  //   if (isModalOpen) {
-  //     // Solicita permissão toda vez que o modal for aberto
-  //     // requestPermission();
-  //   }
-  // }, [isModalOpen]);
+  // Função para listar os dispositivos de mídia disponíveis
+  const getDevices = async () => {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(
+      (device) => device.kind === "videoinput"
+    );
+    setVideoDevices(videoDevices);
+    if (videoDevices.length > 0) {
+      setSelectedDevice(videoDevices[0].deviceId); // Defina a primeira câmera como selecionada
+      setCurrentDeviceId(videoDevices[0].deviceId);
+    }
+  };
+
+  useEffect(() => {
+    if (isModalOpen) {
+      getDevices(); // Carregar dispositivos de vídeo quando o modal for aberto
+    }
+  }, [isModalOpen]);
 
   const capture = useCallback(() => {
-    console.log(cameraRef);
     if (cameraRef.current) {
       const imageSrc = cameraRef.current.getScreenshot();
-      console.log(imageSrc);
       setPhoto(imageSrc);
     }
   }, []);
@@ -89,6 +102,16 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
     setPhoto(null); // Permite tirar uma nova foto
   };
 
+  const handleSwitchCamera = () => {
+    const nextDeviceIndex =
+      (videoDevices.findIndex((device) => device.deviceId === currentDeviceId) +
+        1) %
+      videoDevices.length; // Alterna entre as câmeras
+    const nextDeviceId = videoDevices[nextDeviceIndex].deviceId;
+    setCurrentDeviceId(nextDeviceId);
+    setSelectedDevice(nextDeviceId);
+  };
+
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogContent className="max-w-lg p-4 rounded-md">
@@ -107,13 +130,15 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             </div>
           ) : !photo ? (
             <>
-              <h1>hehe</h1>
               <Webcam
                 ref={cameraRef}
                 width={300}
                 height={450}
                 screenshotFormat="image/png"
                 className="border border-red-400"
+                videoConstraints={{
+                  deviceId: { exact: selectedDevice },
+                }}
               />
             </>
           ) : (
@@ -141,6 +166,13 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
           {!hasPermission && !photo && (
             <Button onClick={requestPermission} variant="secondary">
               Solicitar Permissão
+            </Button>
+          )}
+
+          {/* Botão para alternar entre as câmeras */}
+          {videoDevices.length > 1 && !photo && (
+            <Button onClick={handleSwitchCamera} variant="secondary">
+              Trocar Câmera
             </Button>
           )}
         </div>
