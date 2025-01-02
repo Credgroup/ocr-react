@@ -91,28 +91,26 @@ export default function Home() {
       <h1>
         {enviroment} - v{appVersion}
       </h1>
-      {1 + 1 == 4 && (
-        <>
-          <Webcam
-            ref={cameraRef}
-            width={300}
-            height={450}
-            screenshotFormat="image/png"
-            videoConstraints={{
-              facingMode: { exact: "environment" },
-            }}
-            className="border border-red-400"
+      <>
+        <Webcam
+          ref={cameraRef}
+          width={300}
+          height={450}
+          screenshotFormat="image/png"
+          videoConstraints={{
+            facingMode: { exact: "environment" },
+          }}
+          className="border border-red-400"
+        />
+        <Button onClick={handleTakePhoto}>Tirar Foto</Button>
+        {photo && (
+          <img
+            src={photo}
+            alt="Preview da Foto"
+            className="w-full h-64 object-contain bg-gray-200"
           />
-          <Button onClick={handleTakePhoto}>Tirar Foto</Button>
-          {photo && (
-            <img
-              src={photo}
-              alt="Preview da Foto"
-              className="w-full h-64 object-contain bg-gray-200"
-            />
-          )}
-        </>
-      )}
+        )}
+      </>
 
       <CameraModal isModalOpen={open} setIsModalOpen={setOpen} />
       <button onClick={() => setOpen(true)}>abrir</button>
