@@ -5,7 +5,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useCallback, useRef, useState, useEffect } from "react";
+import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
 const videoConstraints = {
