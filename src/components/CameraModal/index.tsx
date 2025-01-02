@@ -25,7 +25,11 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   // Função para solicitar permissão para acessar a câmera
   const requestPermission = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({
+        video: {
+          facingMode: { exact: "environment" },
+        },
+      })
       .then(() => {
         setHasPermission(true);
         setError(null); // Reseta o erro se a permissão for concedida
