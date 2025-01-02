@@ -5,8 +5,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
+import { useRef, useState, useEffect } from "react";
 
 interface CameraModalProps {
   isModalOpen: boolean;
@@ -14,99 +13,102 @@ interface CameraModalProps {
 }
 
 export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
-  const cameraRef = useRef<Webcam>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [deviceId, setDeviceId] = useState<string | null>(null); // ID da câmera selecionada
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
-  const requestPermission = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true })
-      .then(() => {
-        setHasPermission(true);
-        setError(null);
-        loadDevices(); // Carrega dispositivos ao conceder permissão
-      })
-      .catch((err) => {
-        setHasPermission(false);
-        let errorMessage = "Erro desconhecido ao acessar a câmera.";
-
-        if (
-          err.name === "NotFoundError" ||
-          err.name === "DevicesNotFoundError"
-        ) {
-          errorMessage = "Nenhuma câmera foi encontrada.";
-        } else if (
-          err.name === "NotAllowedError" ||
-          err.name === "PermissionDeniedError"
-        ) {
-          errorMessage = "Você deve conceder permissão para acessar a câmera.";
-        } else if (
-          err.name === "NotReadableError" ||
-          err.name === "TrackStartError"
-        ) {
-          errorMessage =
-            "Houve um erro ao tentar acessar a câmera. Tente novamente.";
-        } else {
-          errorMessage = `Erro: ${err.message}`;
-        }
-
-        setError(errorMessage);
-        console.error("Erro ao solicitar permissão:", err);
-      });
-  };
-
-  const loadDevices = () => {
-    navigator.mediaDevices.enumerateDevices().then((mediaDevices) => {
-      const videoDevices = mediaDevices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      setDevices(videoDevices);
-
-      // Tenta selecionar a câmera traseira automaticamente
-      const backCamera = devices.find(
-        (device) =>
-          device.label.toLowerCase().includes("traseira") ||
-          device.label.toLowerCase().includes("back")
-      );
-
-      if (backCamera) {
-        setDeviceId(backCamera.deviceId);
-      } else if (videoDevices.length > 0) {
-        setDeviceId(videoDevices[0].deviceId); // Seleciona a primeira câmera como fallback
+  // Função para solicitar permissão e iniciar a stream da câmera
+  const requestPermission = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setHasPermission(true);
+      setError(null); // Reseta o erro caso exista
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
       }
-    });
+    } catch (err: any) {
+      setHasPermission(false);
+      let errorMessage = "Erro desconhecido ao acessar a câmera.";
+
+      // Tratamento de erros específicos
+      if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        errorMessage = "Nenhuma câmera foi encontrada.";
+      } else if (
+        err.name === "NotAllowedError" ||
+        err.name === "PermissionDeniedError"
+      ) {
+        errorMessage = "Você deve conceder permissão para acessar a câmera.";
+      } else if (
+        err.name === "NotReadableError" ||
+        err.name === "TrackStartError"
+      ) {
+        errorMessage =
+          "Houve um erro ao tentar acessar a câmera. Tente novamente.";
+      } else {
+        errorMessage = `Erro: ${err.message}`;
+      }
+
+      setError(errorMessage);
+      console.error("Erro ao solicitar permissão:", err);
+    }
   };
 
-  const capture = useCallback(() => {
-    if (cameraRef.current) {
-      const imageSrc = cameraRef.current.getScreenshot();
-      setPhoto(imageSrc);
-    }
-  }, []);
+  // Captura a foto atual da stream da câmera
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const video = videoRef.current;
+      const context = canvas.getContext("2d");
 
-  const handleTakePhoto = () => {
-    capture();
+      if (context) {
+        // Ajusta o canvas para o tamanho do vídeo
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        // Desenha o frame do vídeo no canvas
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Obtém a imagem como base64
+        const imageData = canvas.toDataURL("image/png");
+        setPhoto(imageData);
+      }
+    }
   };
 
   const handleConfirm = () => {
     if (photo) {
       console.log("Base64 da foto:", photo);
-      setPhoto(null);
-      setIsModalOpen(false);
+      setPhoto(null); // Reseta a foto para novas capturas
+      setIsModalOpen(false); // Fecha o modal
     }
   };
 
   const handleCancel = () => {
-    setPhoto(null);
+    setPhoto(null); // Permite tirar uma nova foto
+  };
+
+  // Para parar a stream quando o modal for fechado
+  const stopStream = () => {
+    if (videoRef.current?.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+    }
   };
 
   useEffect(() => {
     if (isModalOpen) {
       requestPermission();
+    } else {
+      stopStream();
     }
+
+    return () => {
+      stopStream();
+    };
   }, [isModalOpen]);
 
   return (
@@ -126,16 +128,11 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             </div>
           ) : !photo ? (
             <>
-              {deviceId && (
-                <Webcam
-                  ref={cameraRef}
-                  width={300}
-                  height={450}
-                  screenshotFormat="image/png"
-                  videoConstraints={{ deviceId }}
-                  className="border border-red-400"
-                />
-              )}
+              <video
+                ref={videoRef}
+                className="w-full h-auto border border-gray-400 rounded-md"
+                playsInline
+              />
             </>
           ) : (
             <img
@@ -145,9 +142,11 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             />
           )}
 
+          <canvas ref={canvasRef} className="hidden" />
+
           <div className="flex gap-2">
             {!photo ? (
-              <Button onClick={handleTakePhoto}>Tirar Foto</Button>
+              <Button onClick={capturePhoto}>Tirar Foto</Button>
             ) : (
               <>
                 <Button onClick={handleConfirm}>Confirmar</Button>
@@ -157,12 +156,6 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
               </>
             )}
           </div>
-
-          {!hasPermission && !photo && (
-            <Button onClick={requestPermission} variant="secondary">
-              Solicitar Permissão
-            </Button>
-          )}
         </div>
       </DialogContent>
     </Dialog>
