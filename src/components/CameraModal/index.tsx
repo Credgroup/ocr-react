@@ -115,6 +115,7 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
               height={450}
               screenshotFormat="image/png"
               videoConstraints={videoConstraints}
+              className="border border-red-400"
             />
           ) : (
             <img

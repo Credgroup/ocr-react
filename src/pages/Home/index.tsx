@@ -5,6 +5,7 @@ import { AuthType } from "@/types";
 import { log } from "@/lib/utils";
 import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
+import Webcam from "react-webcam";
 
 export default function Home() {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -65,8 +66,11 @@ export default function Home() {
   };
 
   return (
-    <h1>
-      {enviroment} - v{appVersion}
-    </h1>
+    <>
+      <h1>
+        {enviroment} - v{appVersion}
+      </h1>
+      <Webcam />
+    </>
   );
 }
