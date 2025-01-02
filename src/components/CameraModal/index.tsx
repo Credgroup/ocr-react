@@ -8,9 +8,9 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-const videoConstraints = {
-  facingMode: { exact: "environment" },
-};
+// const videoConstraints = {
+//   facingMode: { exact: "environment" },
+// };
 
 interface CameraModalProps {
   isModalOpen: boolean;
