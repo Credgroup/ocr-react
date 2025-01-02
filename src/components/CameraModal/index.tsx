@@ -23,10 +23,10 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [currentDeviceId, setCurrentDeviceId] = useState<string>(""); // ID do dispositivo atual
   const [stream, setStream] = useState<MediaStream | null>(null); // Para armazenar a stream da câmera
 
-  // Função para solicitar permissão para acessar a câmera
+  // Função para solicitar permissão para acessar todas as câmeras
   const requestPermission = () => {
     navigator.mediaDevices
-      .getUserMedia({ video: { deviceId: selectedDevice } })
+      .getUserMedia({ video: true }) // Solicita permissão para qualquer dispositivo de vídeo
       .then((stream) => {
         setHasPermission(true);
         setStream(stream); // Armazena a stream da câmera
@@ -66,12 +66,12 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const getDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
 
-    // Tenta filtrar entre as câmeras frontal e traseira, se possível
+    // Filtra todos os dispositivos de vídeo
     const videoDevices = devices.filter(
       (device) => device.kind === "videoinput"
     );
 
-    // Aqui tentamos pegar os dispositivos com "facingMode" se disponível
+    // Tenta filtrar entre as câmeras frontal e traseira, se possível
     const frontAndBackCameras = videoDevices.filter((device) => {
       return (
         device.label.toLowerCase().includes("front") ||
