@@ -21,13 +21,15 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]); // Armazenar as câmeras
   const [selectedDevice, setSelectedDevice] = useState<string>(""); // Dispositivo selecionado
   const [currentDeviceId, setCurrentDeviceId] = useState<string>(""); // ID do dispositivo atual
+  const [stream, setStream] = useState<MediaStream | null>(null); // Para armazenar a stream da câmera
 
   // Função para solicitar permissão para acessar a câmera
   const requestPermission = () => {
     navigator.mediaDevices
       .getUserMedia({ video: { deviceId: selectedDevice } })
-      .then(() => {
+      .then((stream) => {
         setHasPermission(true);
+        setStream(stream); // Armazena a stream da câmera
         setError(null); // Reseta o erro se a permissão for concedida
       })
       .catch((err) => {
@@ -90,9 +92,17 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
     }
   };
 
+  // Iniciar a câmera quando o modal for aberto
   useEffect(() => {
     if (isModalOpen) {
       getDevices(); // Carregar dispositivos de vídeo quando o modal for aberto
+    } else {
+      // Fechar e liberar a câmera quando o modal for fechado
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop()); // Para a stream da câmera
+      }
+      setStream(null); // Limpa a referência da stream
+      setHasPermission(false); // Reseta o estado de permissão
     }
   }, [isModalOpen]);
 
