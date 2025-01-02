@@ -112,12 +112,9 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
             <Webcam
               ref={cameraRef}
               width={300}
+              height={450}
               screenshotFormat="image/png"
               videoConstraints={videoConstraints}
-              style={{
-                width: "320px",
-                aspectRatio: 9 / 16,
-              }}
             />
           ) : (
             <img
