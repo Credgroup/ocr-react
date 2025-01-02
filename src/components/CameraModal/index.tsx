@@ -65,19 +65,21 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
   // Função para listar os dispositivos de vídeo disponíveis
   const getDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
-
+    console.log(devices);
     // Filtra todos os dispositivos de vídeo
-    const videoDevices = devices.filter(
+    const videoDevicesArr = devices.filter(
       (device) => device.kind === "videoinput"
     );
 
+    console.log(videoDevicesArr);
     // Tenta filtrar entre as câmeras frontal e traseira, se possível
-    const frontAndBackCameras = videoDevices.filter((device) => {
+    const frontAndBackCameras = videoDevicesArr.filter((device) => {
       return (
         device.label.toLowerCase().includes("front") ||
         device.label.toLowerCase().includes("back")
       );
     });
+    console.log(frontAndBackCameras);
 
     // Se encontrarmos câmeras frontal e traseira, usamos elas
     if (frontAndBackCameras.length > 0) {
@@ -86,10 +88,13 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       setCurrentDeviceId(frontAndBackCameras[0].deviceId);
     } else {
       // Caso contrário, apenas adicione todas as câmeras encontradas
-      setVideoDevices(videoDevices);
-      setSelectedDevice(videoDevices[0].deviceId);
-      setCurrentDeviceId(videoDevices[0].deviceId);
+      setVideoDevices(videoDevicesArr);
+      setSelectedDevice(videoDevicesArr[0].deviceId);
+      setCurrentDeviceId(videoDevicesArr[0].deviceId);
     }
+
+    console.log(videoDevicesArr);
+    console.log(videoDevices);
   };
 
   // Iniciar a câmera quando o modal for aberto
@@ -137,6 +142,8 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
     const nextDeviceId = videoDevices[nextDeviceIndex].deviceId;
     setCurrentDeviceId(nextDeviceId);
     setSelectedDevice(nextDeviceId);
+    console.log(nextDeviceId);
+    console.log(selectedDevice);
   };
 
   return (
