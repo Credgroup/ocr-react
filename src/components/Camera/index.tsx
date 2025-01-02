@@ -14,14 +14,13 @@ export const Camera = ({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [currentFacingMode, setCurrentFacingMode] = useState(facingMode);
 
   // Solicita permissão para acessar a câmera
   useEffect(() => {
     const startCamera = async () => {
       try {
         const userMedia = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: currentFacingMode },
+          video: { facingMode: facingMode },
         });
         setStream(userMedia);
         if (videoRef.current) {
@@ -41,8 +40,9 @@ export const Camera = ({
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }
+      setStream(null);
     };
-  }, [currentFacingMode]);
+  }, []);
 
   // Captura uma imagem do vídeo
   const capturePhoto = () => {
@@ -59,11 +59,6 @@ export const Camera = ({
       const photo = canvas.toDataURL("image/png");
       onCapture(photo); // Retorna a foto para o callback
     }
-  };
-
-  // Alterna entre a câmera frontal e traseira
-  const toggleCamera = () => {
-    setCurrentFacingMode((prev) => (prev === "user" ? "environment" : "user"));
   };
 
   return (
@@ -85,12 +80,6 @@ export const Camera = ({
           className="bg-blue-500 text-white py-2 px-4 rounded"
         >
           Capturar Foto
-        </button>
-        <button
-          onClick={toggleCamera}
-          className="bg-gray-500 text-white py-2 px-4 rounded"
-        >
-          Alternar Câmera
         </button>
       </div>
     </div>
