@@ -7,6 +7,7 @@ import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
 import Webcam from "react-webcam";
 import { Button } from "@/components/ui/button";
+import { CameraModal } from "@/components/CameraModal";
 
 const videoConstraints = {
   facingMode: { exact: "environment" },
@@ -24,6 +25,7 @@ export default function Home() {
   const docsParam = params.get("docs");
   const themeParams = params.get("theme");
   const [photo, setPhoto] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const cameraRef = useRef<any>(null);
 
@@ -105,6 +107,9 @@ export default function Home() {
           className="w-full h-64 object-contain bg-gray-200"
         />
       )}
+
+      <CameraModal isModalOpen={open} setIsModalOpen={setOpen} />
+      <button onClick={() => setOpen(true)}>abrir</button>
     </>
   );
 }
