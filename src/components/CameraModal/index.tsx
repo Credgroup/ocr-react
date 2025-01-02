@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -5,48 +6,33 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Camera } from "@/components/Camera";
-import { useState, useEffect } from "react";
+import { Camera } from "@/components/Camera"; // Importe o componente de câmera aqui
 
 interface CameraModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
+export const CameraModal: React.FC<CameraModalProps> = ({
+  isModalOpen,
+  setIsModalOpen,
+}) => {
   const [photo, setPhoto] = useState<string | null>(null);
-  const [videoDevices, setVideoDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedDevice, setSelectedDevice] = useState<string>("");
 
-  // Obtém as câmeras disponíveis
-  useEffect(() => {
-    const getDevices = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoInputs = devices.filter(
-        (device) => device.kind === "videoinput"
-      );
-      setVideoDevices(videoInputs);
-      if (videoInputs.length > 0) {
-        setSelectedDevice(videoInputs[0].deviceId); // Define a primeira câmera como padrão
-      }
-    };
-
-    if (isModalOpen) {
-      getDevices();
-    }
-  }, [isModalOpen]);
-
-  const handlePhotoTaken = (photo: string) => {
-    setPhoto(photo);
+  const handleCapture = (capturedPhoto: string) => {
+    setPhoto(capturedPhoto);
   };
 
-  const handleSwitchCamera = () => {
-    console.log("switch camera");
-    const currentIndex = videoDevices.findIndex(
-      (device) => device.deviceId === selectedDevice
-    );
-    const nextIndex = (currentIndex + 1) % videoDevices.length;
-    setSelectedDevice(videoDevices[nextIndex].deviceId);
+  const handleConfirm = () => {
+    if (photo) {
+      console.log("Foto capturada (base64):", photo);
+      setPhoto(null);
+      setIsModalOpen(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setPhoto(null); // Reseta a foto para novas capturas
   };
 
   return (
@@ -59,42 +45,27 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
 
         <div className="flex flex-col items-center gap-4">
           {!photo ? (
-            <>
-              <Camera
-                deviceId={selectedDevice}
-                onPhotoTaken={handlePhotoTaken}
-                className="w-full h-64"
-              />
-              {videoDevices.length > 1 && (
-                <Button onClick={handleSwitchCamera} className="z-50">
-                  Trocar Câmera
-                </Button>
-              )}
-            </>
+            <Camera onCapture={handleCapture} className="w-full" />
           ) : (
             <img
               src={photo}
-              alt="Foto Capturada"
+              alt="Preview da Foto"
               className="w-full h-64 object-contain bg-gray-200"
             />
           )}
 
           <div className="flex gap-2">
-            {!photo ? (
-              <Button onClick={() => setIsModalOpen(false)}>Cancelar</Button>
-            ) : (
+            {photo ? (
               <>
-                <Button onClick={() => console.log("Foto Confirmada:", photo)}>
-                  Confirmar
-                </Button>
-                <Button onClick={() => setPhoto(null)} variant="error">
-                  Retirar Foto
+                <Button onClick={handleConfirm}>Confirmar</Button>
+                <Button onClick={handleCancel} variant="error">
+                  Cancelar
                 </Button>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       </DialogContent>
     </Dialog>
   );
-}
+};
