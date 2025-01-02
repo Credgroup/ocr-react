@@ -61,14 +61,15 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       });
   };
 
-  useEffect(() => {
-    if (isModalOpen) {
-      // Solicita permissão toda vez que o modal for aberto
-      requestPermission();
-    }
-  }, [isModalOpen]);
+  // useEffect(() => {
+  //   if (isModalOpen) {
+  //     // Solicita permissão toda vez que o modal for aberto
+  //     // requestPermission();
+  //   }
+  // }, [isModalOpen]);
 
   const capture = useCallback(() => {
+    console.log(cameraRef);
     if (cameraRef.current) {
       const imageSrc = cameraRef.current.getScreenshot();
       console.log(imageSrc);
@@ -109,14 +110,17 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
               microfone.
             </div>
           ) : !photo ? (
-            <Webcam
-              ref={cameraRef}
-              width={300}
-              height={450}
-              screenshotFormat="image/png"
-              videoConstraints={videoConstraints}
-              className="border border-red-400"
-            />
+            <>
+              <h1>hehe</h1>
+              <Webcam
+                ref={cameraRef}
+                width={300}
+                height={450}
+                screenshotFormat="image/png"
+                videoConstraints={videoConstraints}
+                className="border border-red-400"
+              />
+            </>
           ) : (
             <img
               src={photo}
