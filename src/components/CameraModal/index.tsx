@@ -8,10 +8,6 @@ import { Button } from "@/components/ui/button";
 import { useCallback, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-// const videoConstraints = {
-//   facingMode: { exact: "environment" },
-// };
-
 interface CameraModalProps {
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -93,6 +89,10 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
     setPhoto(null); // Permite tirar uma nova foto
   };
 
+  const videoConstraintsVar = {
+    facingMode: { exact: "environment" },
+  };
+
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogContent className="max-w-lg p-4 rounded-md">
@@ -117,9 +117,7 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
                 width={300}
                 height={450}
                 screenshotFormat="image/png"
-                videoConstraints={{
-                  facingMode: { exact: "environment" },
-                }}
+                videoConstraints={videoConstraintsVar}
                 className="border border-red-400"
               />
             </>
