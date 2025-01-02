@@ -60,15 +60,32 @@ export function CameraModal({ isModalOpen, setIsModalOpen }: CameraModalProps) {
       });
   };
 
-  // Função para listar os dispositivos de mídia disponíveis
+  // Função para listar os dispositivos de vídeo disponíveis
   const getDevices = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
+
+    // Tenta filtrar entre as câmeras frontal e traseira, se possível
     const videoDevices = devices.filter(
       (device) => device.kind === "videoinput"
     );
-    setVideoDevices(videoDevices);
-    if (videoDevices.length > 0) {
-      setSelectedDevice(videoDevices[0].deviceId); // Defina a primeira câmera como selecionada
+
+    // Aqui tentamos pegar os dispositivos com "facingMode" se disponível
+    const frontAndBackCameras = videoDevices.filter((device) => {
+      return (
+        device.label.toLowerCase().includes("front") ||
+        device.label.toLowerCase().includes("back")
+      );
+    });
+
+    // Se encontrarmos câmeras frontal e traseira, usamos elas
+    if (frontAndBackCameras.length > 0) {
+      setVideoDevices(frontAndBackCameras);
+      setSelectedDevice(frontAndBackCameras[0].deviceId);
+      setCurrentDeviceId(frontAndBackCameras[0].deviceId);
+    } else {
+      // Caso contrário, apenas adicione todas as câmeras encontradas
+      setVideoDevices(videoDevices);
+      setSelectedDevice(videoDevices[0].deviceId);
       setCurrentDeviceId(videoDevices[0].deviceId);
     }
   };
