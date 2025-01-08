@@ -32,7 +32,7 @@ RUN npm run build
 FROM nginx:latest
 
 # Copia os arquivos gerados na etapa anterior para a pasta padrão do NGINX
-COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expondo a porta padrão do NGINX
