@@ -1,4 +1,5 @@
 import Avatar from "@/components/Avatar";
+import ConfirmSendDocs from "@/components/ConfirmSendDocs";
 import DocList from "@/components/DocList";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -48,6 +49,7 @@ export default function DocsPage() {
           </div>
         </div>
         <DocList />
+        <ConfirmSendDocs className="mt-6" />
       </SmallContainer>
       <Footer
         address={footerContent?.address}

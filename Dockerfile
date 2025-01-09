@@ -4,6 +4,7 @@ FROM node:latest AS builder
 # Define as variáveis para o build
 ARG VITE_ENVIRONMENT_VARIABLE
 ARG VITE_IMAGE_VERSION
+ARG VITE_CLARITY_ID_KEY
 
 # Diretório de trabalho
 WORKDIR /app
