@@ -13,7 +13,5 @@ services:
     environment:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
-    volumes:
-      - ./dist:/usr/share/nginx/html
     ports:
       - "8038:80"
