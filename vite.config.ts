@@ -11,10 +11,8 @@ export default defineConfig({
   },
   server: {
     headers: {
-      "Access-Control-Allow-Origin": "*", // Permite todas as origens (ou substitua * por um domínio específico)
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS", // Permite métodos específicos
-      "Access-Control-Allow-Headers":
-        "Content-Type, multipart/form-data, Authorization", // Permite cabeçalhos específicos
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
     },
   },
 });
