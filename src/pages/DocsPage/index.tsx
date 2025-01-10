@@ -22,7 +22,7 @@ export default function DocsPage() {
         <p className="text-base mb-6 mt-3">
           Recebemos a sua solicitação de uso da cobertura{" "}
           <span>
-            <b>Nome da Cobertura</b>
+            <b>{auth?.nmCobertura}</b>
           </span>{" "}
           Para prosseguir, é necessário o envio de alguns documentos para
           aprovação da sua solicitação
@@ -34,7 +34,7 @@ export default function DocsPage() {
               <h3 className="uppercase text-sm font-bold leading-none">
                 Cobertura
               </h3>
-              <p className="text-sm font-normal">Lesão temporária</p>
+              <p className="text-sm font-normal">{auth?.nmCobertura}</p>
             </div>
           </div>
           <div className="item flex flex-row gap-2 justify-start items-start">
@@ -43,7 +43,7 @@ export default function DocsPage() {
               <h3 className="uppercase text-sm font-bold leading-none">
                 Data da solicitação
               </h3>
-              <p className="text-sm font-normal">00/00/0000 às 00:00</p>
+              <p className="text-sm font-normal">{auth?.dtCobertura}</p>
             </div>
           </div>
         </div>

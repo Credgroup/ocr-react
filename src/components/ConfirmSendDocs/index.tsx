@@ -24,30 +24,32 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
     if (docs) {
       const header: AxiosRequestConfig = {
         headers: {
-          "Content-Type": "multipart/form-data",
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Strict-Transport-Security': 'max-age=2592000; includeSubDomains; preload',
+          'Content-Type': 'multipart/form-data',
           Authorization:
-            "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM4MSIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjU0MjQ0OSwiZXhwIjoxNzM2NTUyMDQ5LCJpYXQiOjE3MzY1NDI0NDksImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.hwRaBu7tkNrMKVDyid2qYJ99MfnxXamySJke_d1_wFs",
+            'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM4MSIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjU0MjQ0OSwiZXhwIjoxNzM2NTUyMDQ5LCJpYXQiOjE3MzY1NDI0NDksImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.hwRaBu7tkNrMKVDyid2qYJ99MfnxXamySJke_d1_wFs',
         },
       };
       docs.forEach((item) => {
         const formData = new FormData();
-        formData.append("Conf[ChaveDocumento]", item?.ChaveDocumento ?? "");
-        formData.append("Conf[tpDocumento]", item?.TpDocumento ?? "");
-        formData.append(
-          "Conf[ModelClassificarOcr]",
-          item?.ModelClassificarOcr ?? ""
-        );
-        formData.append("Conf[ModelExtrairOcr]", item?.ModelExtrairOcr ?? "");
-        formData.append("Conf[idSinistro]", auth?.idSinistro?.toString() ?? "");
-        formData.append("Conf[idSegurado]", auth?.idSegurado?.toString() ?? "");
-        formData.append(
-          "Conf[idSinistroCobertura]",
-          auth?.idSinistroCobertura?.toString() ?? ""
-        );
-        formData.append("Conf[idSeguro]", auth?.idSeguro?.toString() ?? "");
-        formData.append("Conf[idUsuario]", auth?.idUsuario?.toString() ?? "");
 
+        let obj = {
+          ChaveDocumento: item.ChaveDocumento,
+          tpDocumento: item.TpDocumento,
+          ModelClassificarOcr:item.ModelClassificarOcr,
+          ModelExtrairOcr: item.ModelExtrairOcr,
+          idSinistro: auth?.idSinistro,
+          idSegurado: auth?.idSegurado,
+          idSinistroCobertura: auth?.idSinistroCobertura,
+          idSeguro: auth?.idSeguro,
+          idUsuario: auth?.idUsuario,
+        }
+        
+        const params = JSON.stringify(obj)
         // Adicionando o arquivo, verificando se ele existe
+        formData.append("Conf", params)
         if (item?.file) {
           formData.append("Files", item.file);
         }
