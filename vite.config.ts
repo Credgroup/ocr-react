@@ -12,7 +12,8 @@ export default defineConfig({
   server: {
     headers: {
       "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS"
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      'Strict-Transport-Security': 'max-age=2592000; includeSubDomains; preload'
     },
   },
 });
