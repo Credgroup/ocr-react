@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   ocr-react:
@@ -10,9 +10,12 @@ services:
         VITE_ENVIRONMENT_VARIABLE: ${VITE_ENVIRONMENT_VARIABLE:-default_value}
         VITE_IMAGE_VERSION: ${VITE_IMAGE_VERSION:-noversion}
         VITE_CLARITY_ID_KEY: ${VITE_CLARITY_ID_KEY:-prbv1u2es6}
+        VITE_API_ENDPOINT: ${VITE_API_ENDPOINT:-https://devapi.keepins.app}
     pull_policy: build
     environment:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
+      - VITE_CLARITY_ID_KEY=${VITE_CLARITY_ID_KEY:-prbv1u2es6}
+      - VITE_API_ENDPOINT=${VITE_API_ENDPOINT:-https://devapi.keepins.app}
     ports:
       - "8038:80"
