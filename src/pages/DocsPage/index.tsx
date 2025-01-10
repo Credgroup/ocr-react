@@ -10,7 +10,6 @@ import { FiCalendar, FiShield } from "react-icons/fi";
 
 export default function DocsPage() {
   const auth = useAuthStore((state) => state.auth);
-  const footerContent = useThemeStore((state) => state.footerContent);
   const footerStylesProp = useThemeStore((state) => state.footerStyles);
   const headerStylesProp = useThemeStore((state) => state.headerStyles);
 
@@ -51,11 +50,7 @@ export default function DocsPage() {
         <DocList />
         <ConfirmSendDocs className="mt-6" />
       </SmallContainer>
-      <Footer
-        address={footerContent?.address}
-        contacts={footerContent?.contacts && footerContent.contacts}
-        logoImage={footerContent?.logoImage}
-        styles={footerStylesProp && footerStylesProp}
+      <Footer styles={footerStylesProp}
       />
     </ScreenContainer>
   );

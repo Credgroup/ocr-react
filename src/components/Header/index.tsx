@@ -5,7 +5,8 @@ type backgroundType = "img" | "color";
 type HeaderProps = {
   headerStyles: {
     backgroundType: backgroundType;
-    background: string;
+    background?: string;
+    backgroundColor?: string;
   };
 };
 
@@ -15,17 +16,15 @@ export default function Header({ headerStyles }: HeaderProps) {
       className="bg-no-repeat bg-cover h-44"
       style={{
         backgroundImage: `url(${headerStyles.background})`,
-        backgroundPosition: "center", 
-        backgroundSize: "cover",       
+        backgroundPosition: "center",
+        backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
       }}
-    >
-    </ScreenContainer>
+    ></ScreenContainer>
   ) : (
     <ScreenContainer
       className="h-44"
-      style={{ backgroundColor: headerStyles.background }}
-    >
-    </ScreenContainer>
+      style={{ backgroundColor: headerStyles.backgroundColor }}
+    ></ScreenContainer>
   );
 }

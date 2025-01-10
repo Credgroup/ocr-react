@@ -1,14 +1,9 @@
 import { ScreenContainer, SmallContainer } from "../Layout/Conainer";
-import { FooterData } from "@/types";
+import { FooterStyles } from "@/types";
 
-type FooterProps = FooterData;
+type FooterProps = {styles: FooterStyles};
 
-export default function Footer({
-  styles,
-  contacts,
-  address,
-  logoImage,
-}: FooterProps) {
+export default function Footer({styles}: FooterProps) {
   return (
     <ScreenContainer
       className={`py-6 mt-auto`}
@@ -16,7 +11,7 @@ export default function Footer({
     >
       <SmallContainer className="flex flex-col items-center sm:flex-row sm:items-start gap-6 sm:gap-0 text-center sm:text-left sm:justify-between">
         <div className="brand_image relative w-40 sm:max-w-32">
-          <img src={logoImage} alt="Logo da empresa" />
+          <img src={styles.logoImage} alt="Logo da empresa" />
         </div>
         <div className="social_medias w-full max-w-40">
           <h4
@@ -29,9 +24,9 @@ export default function Footer({
             className="flex gap-1 flex-wrap justify-center sm:justify-start text-sm"
             style={{ color: styles.textColor }}
           >
-            {contacts &&
-              contacts.length > 0 &&
-              contacts.map((item, i) =>
+            {styles.contacts &&
+              styles.contacts.length > 0 &&
+              styles.contacts.map((item, i) =>
                 item.type == "telefone" ? (
                   <li className="hover:underline" key={item.content + i}>
                     <a href={`mailto:${item.content}`}>{item.content}</a>
@@ -55,7 +50,7 @@ export default function Footer({
             className="text-sm font-regular"
             style={{ color: styles.textColor }}
           >
-            {address}
+            {styles.address}
           </p>
         </div>
       </SmallContainer>

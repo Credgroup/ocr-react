@@ -9,7 +9,6 @@ type PageGuardProps = {
 
 export default function PageGuard({ Page, auth }: PageGuardProps) {
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!auth) {
       navigate("/authdenied", { replace: true });

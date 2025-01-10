@@ -1,6 +1,12 @@
 export type AuthType = {
   name: string;
-  id: number;
+  idSegurado: string,
+  idSeguro: string,
+  idSinistroCobertura: string,
+  idSinistro: string,
+  idUsuario: string,
+  nmCobertura: string,
+  dtCobertura: string,
 };
 
 export type FooterContact = {
@@ -8,29 +14,32 @@ export type FooterContact = {
   content: string;
 };
 
-type FooterStyles = {
+export type FooterStyles = {
   backgroundColor?: string;
   titleColor?: string;
   textColor?: string;
-};
-
-export type FooterData = {
-  styles: FooterStyles;
   logoImage: string;
   contacts?: FooterContact[];
   address: string;
 };
 
+
 export type FileIconType = "pdf" | "png" | "jpg" | "unknown" | "jpeg";
 
 export type Doc = {
   id: string;
-  title: string;
+  Nome: string;
   type: FileIconType;
   campoApi: string;
   checked: boolean;
   description: string | null;
   file: File | null;
+  ModelClassificarOcr?: string | null;
+  ModelExtrairOcr?: string | null;
+  ChaveDocumento?: string | null;
+  TpDocumento?: string | null;
+  TipoDocOcr?: string | null
+  obrigatorio?: boolean;
 };
 
 export type updateDoc = {

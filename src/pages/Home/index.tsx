@@ -1,40 +1,46 @@
 import useAuthStore from "@/stores/authentication";
 import { useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { AuthType } from "@/types";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { AuthType, Doc } from "@/types";
 import { log } from "@/lib/utils";
 import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
-
-// const videoConstraints = {
-//   facingMode: { exact: "environment" },
-// };
+import { v4 as uuidv4 } from "uuid";
 
 export default function Home() {
   const setAuth = useAuthStore((state) => state.setAuth);
   const setDocs = useDocStore((state) => state.setDocs);
   const setHeaderStyles = useThemeStore((state) => state.setHeaderStyles);
   const setFooterStyles = useThemeStore((state) => state.setFooterStyles);
-  const setFooterContent = useThemeStore((state) => state.setFooterContent);
+  const setPageContent = useThemeStore((state) => state.setPageContent);
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const authParams = params.get("auth");
+  const authParams = params.get("info");
   const docsParam = params.get("docs");
   const themeParams = params.get("theme");
-  const url = {
-    hostname:window.location.hostname,
-    params: "auth=%7B%22name%22%3A%22Renan%20Lima%22%2C%22id%22%3A123%7D&docs=%5B%7B%22id%22%3A%221%22%2C%22title%22%3A%22RG%20%28Frente%20e%20Verso%29%22%2C%22description%22%3A%22Fa%C3%A7a%20o%20upload%20do%20seu%20RG%22%2C%22file%22%3Anull%7D%2C%7B%22id%22%3A%222%22%2C%22title%22%3A%22Protocolo%20de%20Atendimento%22%2C%22description%22%3A%22Envie%20o%20protocolo%20recebido%20na%20solicita%C3%A7%C3%A3o%22%2C%22file%22%3Anull%7D%2C%7B%22id%22%3A%223%22%2C%22title%22%3A%22Carteira%20do%20Posto%22%2C%22description%22%3A%22Envie%20a%20carteira%20do%20posto%20de%20atendimento%22%2C%22file%22%3Anull%7D%5D&theme=%7B%22headerStyles%22%3A%7B%22backgroundType%22%3A%22img%22%2C%22background%22%3A%22https%3A%2F%2Fwkfkeepinsmarsh.blob.core.windows.net%2Farquivamento%2Fdocumentos%2Fmulticanal%2Fwhatsapp%2Finteracoes%2F15001%2Fbackground1.png%22%7D%2C%22footerStyles%22%3A%7B%22backgroundColor%22%3A%22%23f0f0f0%22%2C%22backgroundImage%22%3A%22https%3A%2F%2Fwkfkeepinsmarsh.blob.core.windows.net%2Farquivamento%2Fdocumentos%2Fmulticanal%2Fwhatsapp%2Finteracoes%2F15001%2Fbackground1.png%22%2C%22textColor%22%3A%22%23000000%22%2C%22titleColor%22%3A%22%230064ff%22%7D%2C%22content%22%3A%7B%22logoImage%22%3A%22https%3A%2F%2Fwkfkeepinsmarsh.blob.core.windows.net%2Farquivamento%2Fdocumentos%2Fmulticanal%2Fwhatsapp%2Finteracoes%2F15001%2Flogo2.png%22%2C%22address%22%3A%22Endere%C3%A7o%20da%20Keepins%22%2C%22contacts%22%3A%5B%7B%22type%22%3A%22telefone%22%2C%22content%22%3A%22%2811%29%204000-0000%22%7D%2C%7B%22type%22%3A%22email%22%2C%22content%22%3A%22contato%40empresa.com%22%7D%5D%7D%7D"
-  }
+  // const url = {
+  //   hostname: window.location.hostname,
+  //   params:
+  //     "?info=%7B%22nome%22%3A%22Lucas%20iFood%22%2C%22idSegurado%22%3A29573%2C%22idSeguro%22%3A1565470%2C%22idSinistroCobertura%22%3A1007%2C%22idSinistro%22%3A16%2C%22idUsuario%22%3A1005%7D&docs=%5B%7B%22Fixo%22%3Afalse%2C%22Nome%22%3A%22Boletim%20de%20Ocorrencia%20%22%2C%22Obrigatorio%22%3Afalse%2C%22CampoApi%22%3A%22boletim_ocorrencia%22%2C%22ObrigatorioInicial%22%3Afalse%2C%22ModelExtrairOcr%22%3Anull%2C%22ModelClassificarOcr%22%3Anull%2C%22TpDocumento%22%3Anull%2C%22CamposExtrairOcr%22%3Anull%2C%22TipoDocOcr%22%3Anull%2C%22ChaveDocumento%22%3Anull%7D%2C%7B%22Fixo%22%3Afalse%2C%22Nome%22%3A%22Comprovante%20de%20residencia%20%28terceiro%29%22%2C%22Obrigatorio%22%3Afalse%2C%22CampoApi%22%3A%22comprovante_terceiro_residencia%22%2C%22ObrigatorioInicial%22%3Afalse%2C%22ModelExtrairOcr%22%3Anull%2C%22ModelClassificarOcr%22%3Anull%2C%22TpDocumento%22%3Anull%2C%22CamposExtrairOcr%22%3Anull%2C%22TipoDocOcr%22%3Anull%2C%22ChaveDocumento%22%3Anull%7D%2C%7B%22Fixo%22%3Afalse%2C%22Nome%22%3A%22Atestado%20M%5Cu00E9dico%20com%20Informacao%20do%20Periodo%20Afastamento%22%2C%22Obrigatorio%22%3Afalse%2C%22CampoApi%22%3A%22atestado_periodo_afastamento%22%2C%22ObrigatorioInicial%22%3Afalse%2C%22ModelExtrairOcr%22%3Anull%2C%22ModelClassificarOcr%22%3Anull%2C%22TpDocumento%22%3Anull%2C%22CamposExtrairOcr%22%3Anull%2C%22TipoDocOcr%22%3Anull%2C%22ChaveDocumento%22%3Anull%7D%2C%7B%22Fixo%22%3Afalse%2C%22Nome%22%3A%22Complementar%22%2C%22Obrigatorio%22%3Afalse%2C%22CampoApi%22%3A%22complementar%22%2C%22ObrigatorioInicial%22%3Afalse%2C%22ModelExtrairOcr%22%3Anull%2C%22ModelClassificarOcr%22%3Anull%2C%22TpDocumento%22%3Anull%2C%22CamposExtrairOcr%22%3Anull%2C%22TipoDocOcr%22%3Anull%2C%22ChaveDocumento%22%3Anull%7D%5D&theme=%7B%22headerStyles%22%3A%7B%22backgroundType%22%3A%22color%22%2C%22backgroundColor%22%3A%22%23ff0000%22%2C%22avatarBackground%22%3A%22%23f7f7f7%22%2C%22avatarBorder%22%3A%22%23c7c7c7%22%2C%22avatarTextColor%22%3A%22%23ff0000%22%7D%2C%22pageContent%22%3A%7B%22buttonColor%22%3A%22%23ff0000%22%2C%22textButtonColor%22%3A%22%23ffffff%22%7D%2C%22footerStyles%22%3A%7B%22backgroundColor%22%3A%22%23ededed%22%2C%22textColor%22%3A%22%23525252%22%2C%22titleColor%22%3A%22%23ff0000%22%2C%22logoImage%22%3A%22https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F90%2FIFood_logo.svg%2F1280px-IFood_logo.svg.png%22%2C%22address%22%3A%22Rua%20Ifood%20Pra%20Toda%20Hora%22%2C%22contacts%22%3A%7B%220%22%3A%7B%22content%22%3A%22111111111111111%22%7D%2C%221%22%3A%7B%22content%22%3A%22contato%40gmail.com%22%7D%7D%7D%7D",
+  // };
+
   const enviroment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
   const appVersion = import.meta.env.VITE_IMAGE_VERSION;
 
   useEffect(() => {
     // Capturar os parâmetros de auth da URL
     if (authParams) {
-      let authParamsObj = JSON.parse(authParams);
+      console.log(authParams)
+      let authParamsObj = JSON.parse(decodeURIComponent(authParams));
       const authObj: AuthType = {
-        name: authParamsObj.name,
-        id: authParamsObj.id,
+        name: authParamsObj.nome,
+        idSegurado: authParamsObj.idSegurado,
+        idSeguro: authParamsObj.idSeguro,
+        idSinistroCobertura: authParamsObj.idSinistroCobertura,
+        idSinistro: authParamsObj.idSinistro,
+        idUsuario: authParamsObj.idUsuario,
+        nmCobertura: authParamsObj.nmCobertura,
+        dtCobertura: authParamsObj.dtCobertura,
       };
 
       log("Parâmetro auth:", authObj);
@@ -43,13 +49,16 @@ export default function Home() {
 
     if (docsParam) {
       const docs = JSON.parse(decodeURIComponent(docsParam));
+      docs.forEach((item: Doc) => (item.id = uuidv4()));
       setDocs(docs);
       log("Parâmetro de docs:", docs);
     }
 
     if (themeParams) {
+      console.log("esse é o parametro theme")
+      console.log({themeParams})
       const themeObj = JSON.parse(decodeURIComponent(themeParams));
-
+      console.log({themeObj})
       if (themeObj.headerStyles) {
         setHeaderStyles(themeObj.headerStyles); // Define os estilos do Header
       }
@@ -58,13 +67,14 @@ export default function Home() {
         setFooterStyles(themeObj.footerStyles); // Define os estilos do Footer
       }
 
-      if (themeObj.content) {
-        setFooterContent(themeObj.content);
+      if (themeObj.pageContent) {
+        setPageContent(themeObj.pageContent);
       }
 
       log("Parâmetro de tema:", themeObj);
-      redirect();
     }
+
+    redirect();
   }, []);
 
   const redirect = () => {
@@ -75,7 +85,9 @@ export default function Home() {
     <>
       <h1>
         {enviroment} - v{appVersion}
-        <Link to={{search:url.params}} className="underline text-blue-400">{url.hostname}</Link>
+        {/* <a href={`http://${url.hostname}/${url.params}`} target="_blank" className="underline text-blue-400">
+          {url.hostname}
+        </a> */}
       </h1>
     </>
   );

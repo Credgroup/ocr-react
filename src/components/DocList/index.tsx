@@ -164,7 +164,7 @@ export default function DocList() {
               checked={doc.file ? true : false}
             />
             <DocItem.ContentText
-              title={doc.title}
+              title={doc.Nome}
               description={doc.description || "Clique para fazer upload"}
             />
           </DocItem.ContentContainer>
