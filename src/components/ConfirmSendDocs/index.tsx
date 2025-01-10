@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import useAuthStore from "@/stores/authentication";
 
 type ConfirmSendDocsProps = {
@@ -22,6 +22,13 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
     console.log("Enviando documentos...");
     console.log(docs);
     if (docs) {
+      const header: AxiosRequestConfig = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization:
+            "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM4MSIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjU0MjQ0OSwiZXhwIjoxNzM2NTUyMDQ5LCJpYXQiOjE3MzY1NDI0NDksImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.hwRaBu7tkNrMKVDyid2qYJ99MfnxXamySJke_d1_wFs",
+        },
+      };
       docs.forEach((item) => {
         const formData = new FormData();
         formData.append("Conf[ChaveDocumento]", item?.ChaveDocumento ?? "");
@@ -53,11 +60,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
               import.meta.env.VITE_API_ENDPOINT
             }/api/keepins/v1/cobertura/documento/ocr/importar`,
             formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
+            header
           )
           .then((res) => {
             console.log(res);
