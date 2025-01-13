@@ -6,6 +6,7 @@ import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
 import axios, { AxiosRequestConfig } from "axios";
 import useAuthStore from "@/stores/authentication";
+import { log } from "@/lib/utils";
 
 type ConfirmSendDocsProps = {
   className?: string;
@@ -21,40 +22,53 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   const handleSendFiles = () => {
     console.log("Enviando documentos...");
     console.log(docs);
-    if (docs) {
+
+    const selectDocs = docs?.filter((item) => item.file);
+
+    if (selectDocs) {
       const header: AxiosRequestConfig = {
         headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Strict-Transport-Security': 'max-age=2592000; includeSubDomains; preload',
-          'Content-Type': 'multipart/form-data',
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Strict-Transport-Security":
+            "max-age=2592000; includeSubDomains; preload",
+          "Content-Type": "multipart/form-data",
           Authorization:
-            'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM4MSIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjU0MjQ0OSwiZXhwIjoxNzM2NTUyMDQ5LCJpYXQiOjE3MzY1NDI0NDksImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.hwRaBu7tkNrMKVDyid2qYJ99MfnxXamySJke_d1_wFs',
+            "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM5NCIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjc5ODgyOCwiZXhwIjoxNzM2ODA4NDI4LCJpYXQiOjE3MzY3OTg4MjgsImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.a4xNGG6lVDZLIRNZuM311xSfP2UnaynABbvMVYvLdno",
         },
       };
-      docs.forEach((item) => {
+      selectDocs.forEach((item) => {
+        log("Estrutura do documento: " + item.CampoApi);
+        log(item);
+
         const formData = new FormData();
 
         let obj = {
-          ChaveDocumento: item.campoApi,
+          ChaveDocumento: item.CampoApi,
           tpDocumento: item.TpDocumento,
-          ModelClassificarOcr:item.ModelClassificarOcr,
+          ModelClassificarOcr: item.ModelClassificarOcr,
           ModelExtrairOcr: item.ModelExtrairOcr,
+          CamposExtrairOcr: item.CamposExtrairOcr,
           idSinistro: auth?.idSinistro,
           idSegurado: auth?.idSegurado,
           idSinistroCobertura: auth?.idSinistroCobertura,
           idSeguro: auth?.idSeguro,
           idUsuario: auth?.idUsuario,
-        }
-        
-        const params = JSON.stringify(obj)
+        };
+
+        log("Parametros do documento: " + item.CampoApi);
+        log(obj);
+        const params = JSON.stringify(obj);
         // Adicionando o arquivo, verificando se ele existe
-        formData.append("Conf", params)
+        formData.append("Conf", params);
         if (item?.file) {
           formData.append("Files", item.file);
         }
 
-        console.log(formData);
+        log("FormData Enviado:");
+        formData.forEach((value, key) => {
+          log(`${key}: ${value}`);
+        });
 
         axios
           .post(
@@ -66,6 +80,9 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           )
           .then((res) => {
             console.log(res);
+            if (!res.data.upload) {
+              console.log("ERRO");
+            }
           })
           .catch((err) => {
             console.log(err);
@@ -80,8 +97,8 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   useEffect(() => {
     console.log(docs);
     const missingDocs = docs?.filter((item) => {
-      if(item.Obrigatorio && item.file == null){
-        return item
+      if (item.Obrigatorio && item.file == null) {
+        return item;
       }
     });
     console.log(theme);

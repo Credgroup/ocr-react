@@ -30,7 +30,7 @@ export default function Home() {
   useEffect(() => {
     // Capturar os parâmetros de auth da URL
     if (authParams) {
-      console.log(authParams)
+      console.log(authParams);
       let authParamsObj = JSON.parse(decodeURIComponent(authParams));
       const authObj: AuthType = {
         name: authParamsObj.nome,
@@ -49,16 +49,19 @@ export default function Home() {
 
     if (docsParam) {
       const docs = JSON.parse(decodeURIComponent(docsParam));
-      docs.forEach((item: Doc) => (item.id = uuidv4()));
+      docs.forEach((item: Doc) => {
+        item.id = uuidv4();
+        item.statusUpload = null;
+      });
       setDocs(docs);
       log("Parâmetro de docs:", docs);
     }
 
     if (themeParams) {
-      console.log("esse é o parametro theme")
-      console.log({themeParams})
+      console.log("esse é o parametro theme");
+      console.log({ themeParams });
       const themeObj = JSON.parse(decodeURIComponent(themeParams));
-      console.log({themeObj})
+      console.log({ themeObj });
       if (themeObj.headerStyles) {
         setHeaderStyles(themeObj.headerStyles); // Define os estilos do Header
       }

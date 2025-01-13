@@ -1,12 +1,12 @@
 export type AuthType = {
   name: string;
-  idSegurado: string,
-  idSeguro: string,
-  idSinistroCobertura: string,
-  idSinistro: string,
-  idUsuario: string,
-  nmCobertura: string,
-  dtCobertura: string,
+  idSegurado: string;
+  idSeguro: string;
+  idSinistroCobertura: string;
+  idSinistro: string;
+  idUsuario: string;
+  nmCobertura: string;
+  dtCobertura: string;
 };
 
 export type FooterContact = {
@@ -23,23 +23,24 @@ export type FooterStyles = {
   address: string;
 };
 
-
 export type FileIconType = "pdf" | "png" | "jpg" | "unknown" | "jpeg";
 
 export type Doc = {
   id: string;
   Nome: string;
   type: FileIconType;
-  campoApi: string;
+  CampoApi: string;
   checked: boolean;
   description: string | null;
   file: File | null;
   ModelClassificarOcr?: string | null;
   ModelExtrairOcr?: string | null;
+  CamposExtrairOcr?: string[] | null;
   ChaveDocumento?: string | null;
   TpDocumento?: string | null;
-  TipoDocOcr?: string | null
-  Obrigatorio?: boolean;
+  TipoDocOcr?: string | null;
+  Obrigatorio?: boolean | null;
+  statusUpload?: boolean | null;
 };
 
 export type updateDoc = {
@@ -48,13 +49,3 @@ export type updateDoc = {
   description: string | null;
   file: File | null;
 };
-
-// const docExemple: Doc = {
-//   id: "1234",
-//   title: "Frente documento de identificação",
-//   type: "jpg",
-//   campoApi: "documentoNaApi",
-//   checked: false,
-//   description: null,
-//   file: null,
-// };
