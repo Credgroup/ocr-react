@@ -36,7 +36,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
         const formData = new FormData();
 
         let obj = {
-          ChaveDocumento: item.ChaveDocumento,
+          ChaveDocumento: item.campoApi,
           tpDocumento: item.TpDocumento,
           ModelClassificarOcr:item.ModelClassificarOcr,
           ModelExtrairOcr: item.ModelExtrairOcr,
