@@ -39,7 +39,7 @@ export type Doc = {
   ChaveDocumento?: string | null;
   TpDocumento?: string | null;
   TipoDocOcr?: string | null
-  obrigatorio?: boolean;
+  Obrigatorio?: boolean;
 };
 
 export type updateDoc = {

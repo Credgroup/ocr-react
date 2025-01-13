@@ -79,7 +79,11 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
 
   useEffect(() => {
     console.log(docs);
-    const missingDocs = docs?.filter((item) => item.file == null);
+    const missingDocs = docs?.filter((item) => {
+      if(item.Obrigatorio && item.file == null){
+        return item
+      }
+    });
     console.log(theme);
     if (missingDocs && missingDocs?.length == 0 && isChecked) {
       setDisableButton(false);
