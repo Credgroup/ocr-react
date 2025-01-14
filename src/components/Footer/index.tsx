@@ -1,9 +1,9 @@
 import { ScreenContainer, SmallContainer } from "../Layout/Conainer";
 import { FooterStyles } from "@/types";
 
-type FooterProps = {styles: FooterStyles};
+type FooterProps = { styles: FooterStyles };
 
-export default function Footer({styles}: FooterProps) {
+export default function Footer({ styles }: FooterProps) {
   return (
     <ScreenContainer
       className={`py-6 mt-auto`}
@@ -29,11 +29,11 @@ export default function Footer({styles}: FooterProps) {
               styles.contacts.map((item, i) =>
                 item.type == "telefone" ? (
                   <li className="hover:underline" key={item.content + i}>
-                    <a href={`mailto:${item.content}`}>{item.content}</a>
+                    <a href={`tel:${item.content}`}>{item.content}</a>
                   </li>
                 ) : (
                   <li className="hover:underline" key={item.content + i}>
-                    <a href={`tel:${item.content}`}>{item.content}</a>
+                    <a href={`mailto:${item.content}`}>{item.content}</a>
                   </li>
                 )
               )}

@@ -7,23 +7,40 @@ import useThemeStore from "@/stores/useThemeStore";
 import axios, { AxiosRequestConfig } from "axios";
 import useAuthStore from "@/stores/authentication";
 import { log } from "@/lib/utils";
+import { FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
+import { FiRotateCw } from "react-icons/fi";
+import { Doc } from "@/types";
 
 type ConfirmSendDocsProps = {
   className?: string;
+};
+
+type reqStatusType = {
+  state: "success" | "error" | null;
+  msg: string | null;
 };
 
 export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   const [isChecked, setIsChecked] = useState(false);
   const auth = useAuthStore((state) => state.auth);
   const [disabledButton, setDisableButton] = useState(true);
+  const [resendMessageButton, setResendMessageButton] = useState(false);
   const docs = useDocStore((state) => state.docs);
+  const updateDoc = useDocStore((state) => state.updateDocFile);
   const theme = useThemeStore((state) => state.pageContent);
+  const [resendButtonDisable, setResendButtonDisable] = useState(false);
+  const [reqStatus, setReqStatus] = useState<reqStatusType>({
+    state: null,
+    msg: null,
+  });
 
   const handleSendFiles = () => {
     console.log("Enviando documentos...");
     console.log(docs);
 
-    const selectDocs = docs?.filter((item) => item.file);
+    const selectDocs = docs?.filter(
+      (item) => item.file && item.statusUpload !== "success"
+    );
 
     if (selectDocs) {
       const header: AxiosRequestConfig = {
@@ -33,14 +50,17 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           "Strict-Transport-Security":
             "max-age=2592000; includeSubDomains; preload",
           "Content-Type": "multipart/form-data",
-          Authorization:
-            "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6InJlbmFuLmxpbWFAa2VlcGlucy5jb20uYnIiLCJyb2xlIjoiMSIsIlRva2VuVmVyc2lvbiI6IjM5NCIsIklkQWNjZXNzIjoiMjExNyIsIm5iZiI6MTczNjc5ODgyOCwiZXhwIjoxNzM2ODA4NDI4LCJpYXQiOjE3MzY3OTg4MjgsImlzcyI6ImtlZXBpbnMiLCJhdWQiOiJjcmVkZ3JvdXAifQ.a4xNGG6lVDZLIRNZuM311xSfP2UnaynABbvMVYvLdno",
+          Authorization: "bearer ",
         },
       };
-      selectDocs.forEach((item) => {
+      let hasError = false;
+
+      selectDocs.forEach((item: Doc) => {
         log("Estrutura do documento: " + item.CampoApi);
         log(item);
+        updateDoc(item.id, { statusUpload: "pending" });
 
+        // return;
         const formData = new FormData();
 
         let obj = {
@@ -74,40 +94,86 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           .post(
             `${
               import.meta.env.VITE_API_ENDPOINT
-            }/api/keepins/v1/cobertura/documento/ocr/importar`,
+            }/api/keepins/v1/cobertura/documento/ocr/externo/importar`,
             formData,
             header
           )
           .then((res) => {
             console.log(res);
-            if (!res.data.upload) {
-              console.log("ERRO");
+            if (!res.data.sucesso) {
+              throw new Error(res.data.mensagem);
             }
+            updateDoc(item.id, { statusUpload: "success" });
           })
-          .catch((err) => {
+          .catch((err: Error) => {
             console.log(err);
+            hasError = true;
+            updateDoc(item.id, { statusUpload: "error" });
           });
       });
+
+      if (hasError) {
+        setReqStatus({
+          state: "error",
+          msg: "Um ou mais documentos falharam no envio.",
+        });
+      } else {
+        setReqStatus({
+          state: "success",
+          msg: "Todos os documentos selecionados foram enviados com sucesso!",
+        });
+        hasDocNotSended();
+      }
     }
   };
   const handleChangeChecked = () => {
     setIsChecked(!isChecked);
   };
 
+  const handleRefetchDocs = () => {
+    log("Refetch");
+    // return;
+    handleSendFiles();
+  };
+
   useEffect(() => {
-    console.log(docs);
+    hasDocNotSended();
     const missingDocs = docs?.filter((item) => {
       if (item.Obrigatorio && item.file == null) {
         return item;
       }
     });
-    console.log(theme);
     if (missingDocs && missingDocs?.length == 0 && isChecked) {
       setDisableButton(false);
       return;
     }
     setDisableButton(true);
   }, [docs, isChecked]);
+
+  const hasDocNotSended = () => {
+    console.log("verificando");
+
+    // Verifica se há documentos não enviados e se algum desses documentos está selecionado
+    const test =
+      docs?.some(
+        (item) =>
+          item.statusUpload !== "success" &&
+          item.checked &&
+          (item.file !== null || item.file !== undefined)
+      ) ?? false;
+
+    console.log(test);
+    setResendButtonDisable(!test);
+
+    const test2 = docs?.some(
+      (item) => (item.file == null || item.file == undefined) ?? false
+    );
+    setResendMessageButton(test2 || false);
+
+    // const test3 =
+    //   docs?.every((item) => (item.statusUpload = "success")) ?? false;
+    // setShowResendButton(!test3);
+  };
 
   return (
     <div className={clsx("flex flex-col gap-4", className)}>
@@ -125,18 +191,73 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           .
         </span>
       </label>
-      <div className="flex justify-end">
-        <Button
-          onClick={() => handleSendFiles()}
-          disabled={disabledButton}
-          style={{
-            background: theme.buttonColor,
-            color: theme.textButtonColor,
-          }}
-        >
-          Enviar documentos
-        </Button>
-      </div>
+      {reqStatus.state == null && (
+        <div className="flex justify-end">
+          <Button
+            onClick={() => handleSendFiles()}
+            disabled={disabledButton}
+            style={{
+              background: theme.buttonColor,
+              color: theme.textButtonColor,
+            }}
+          >
+            Enviar documentos
+          </Button>
+        </div>
+      )}
+
+      {reqStatus.state == "error" && (
+        <div className="w-full min-h-12 px-4 py-3 gap-4 flex justify-between items-center border border-yellow-300 bg-yellow-300 bg-opacity-30 rounded-xl">
+          <div className="flex items-center justify-start gap-4">
+            <FiAlertTriangle
+              fontSize={24}
+              className="text-yellow-600 min-w-7"
+            />
+            <h1 className="font-semibold text-black-700 text-md">
+              {reqStatus.msg || "Algum erro aconteceu no envio dos documentos"}
+            </h1>
+          </div>
+          <Button
+            variant={"warning"}
+            disabled={disabledButton}
+            onClick={() => handleRefetchDocs()}
+          >
+            <FiRotateCw />
+            Tentar novamente
+          </Button>
+        </div>
+      )}
+      {reqStatus.state == "success" && (
+        <div className="w-full min-h-12 px-4 py-3 gap-4 flex justify-between items-center border border-lime-300 bg-lime-300 bg-opacity-30 rounded-xl">
+          <div className="flex items-center justify-start gap-4">
+            <FiCheckCircle
+              fontSize={24}
+              strokeWidth={2.5}
+              className="text-lime-600 min-w-7"
+            />
+            <div className="">
+              <h1 className="font-semibold text-black-700 text-md leading-5 mb-1">
+                {reqStatus.msg || "Documentos enviados com sucesso!"}
+              </h1>
+              {resendMessageButton && (
+                <p className="text-xs">
+                  Ainda restam alguns documentos para ser enviados.
+                </p>
+              )}
+            </div>
+          </div>
+          <Button
+            disabled={resendButtonDisable}
+            onClick={() => handleRefetchDocs()}
+            style={{
+              background: theme.buttonColor,
+              color: theme.textButtonColor,
+            }}
+          >
+            Enviar restantes
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

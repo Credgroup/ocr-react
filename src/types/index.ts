@@ -24,7 +24,7 @@ export type FooterStyles = {
 };
 
 export type FileIconType = "pdf" | "png" | "jpg" | "unknown" | "jpeg";
-
+export type statusUploadType = "pending" | "success" | "error" | null;
 export type Doc = {
   id: string;
   Nome: string;
@@ -40,12 +40,7 @@ export type Doc = {
   TpDocumento?: string | null;
   TipoDocOcr?: string | null;
   Obrigatorio?: boolean | null;
-  statusUpload?: boolean | null;
+  statusUpload?: statusUploadType;
 };
 
-export type updateDoc = {
-  type: FileIconType;
-  checked: boolean;
-  description: string | null;
-  file: File | null;
-};
+export type updateDoc = Partial<Doc>;

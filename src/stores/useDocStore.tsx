@@ -15,10 +15,7 @@ const useDocStore = create<{
         doc.id === id
           ? {
               ...doc,
-              type: updatedDoc.type,
-              checked: updatedDoc.checked,
-              description: updatedDoc.description,
-              file: updatedDoc.file,
+              ...updatedDoc,
             }
           : doc
       ),

@@ -169,29 +169,39 @@ export default function DocList() {
             />
           </DocItem.ContentContainer>
           <DocItem.Actions>
-            {doc.file && doc.type !== "pdf" && !isMobile && (
-              <DocItem.Action
-                type="show-preview"
-                dispatch={() => openPreviewModal(doc.file)}
-              />
-            )}
+            {doc.statusUpload == "pending" && <DocItem.Action type="loading" />}
+            {doc.statusUpload == "success" && <DocItem.Action type="success" />}
+            {doc.statusUpload == "error" && <DocItem.Action type="error" />}
+            {doc.file &&
+              doc.type !== "pdf" &&
+              doc.statusUpload == null &&
+              !isMobile && (
+                <DocItem.Action
+                  type="show-preview"
+                  dispatch={() => openPreviewModal(doc.file)}
+                />
+              )}
             {isMobile ? (
-              doc.file ? (
+              doc.file && doc.statusUpload == null ? (
                 <DocItem.Action
                   type="option-mobile"
                   dispatch={() => openOptionModal(doc)} // Alterna a visibilidade do popover para este documento
                 />
               ) : (
-                <DocItem.Action
-                  type="upload-mobile"
-                  dispatch={() => openOptionModal(doc)} // Alterna a visibilidade do popover para este documento
-                />
+                doc.statusUpload == null && (
+                  <DocItem.Action
+                    type="upload-mobile"
+                    dispatch={() => openOptionModal(doc)} // Alterna a visibilidade do popover para este documento
+                  />
+                )
               )
             ) : (
-              <DocItem.Action
-                type="upload-destop"
-                dispatch={() => openUploadModal(doc.id)}
-              />
+              doc.statusUpload == null && (
+                <DocItem.Action
+                  type="upload-destop"
+                  dispatch={() => openUploadModal(doc.id)}
+                />
+              )
             )}
           </DocItem.Actions>
         </DocItem.Root>
