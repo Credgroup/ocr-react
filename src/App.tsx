@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import useAuthStore from "./stores/authentication";
 import PageGuard from "./pages/PageGuard";
 import DocsPage from "./pages/DocsPage";
+import { Toaster } from "./components/ui/toaster";
 
 export default function App() {
   const auth = useAuthStore((state) => state.auth);
@@ -13,6 +14,7 @@ export default function App() {
 
   return (
     <Router>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route

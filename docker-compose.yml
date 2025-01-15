@@ -11,11 +11,15 @@ services:
         VITE_IMAGE_VERSION: ${VITE_IMAGE_VERSION:-noversion}
         VITE_CLARITY_ID_KEY: ${VITE_CLARITY_ID_KEY:-prbv1u2es6}
         VITE_API_ENDPOINT: ${VITE_API_ENDPOINT:-https://devapi.keepins.app}
+        VITE_AES_KEY: ${VITE_AES_KEY:-7061737323313233}
+        VITE_AES_IV: ${VITE_AES_IV:-7061737323313233}
     pull_policy: build
     environment:
       - VITE_ENVIRONMENT_VARIABLE=${VITE_ENVIRONMENT_VARIABLE:-default_value}
       - VITE_IMAGE_VERSION=${VITE_IMAGE_VERSION:-noversion}
       - VITE_CLARITY_ID_KEY=${VITE_CLARITY_ID_KEY:-prbv1u2es6}
       - VITE_API_ENDPOINT=${VITE_API_ENDPOINT:-https://devapi.keepins.app}
+      - VITE_AES_KEY=${VITE_AES_KEY:-7061737323313233}
+      - VITE_AES_IV=${VITE_AES_IV:-7061737323313233}
     ports:
       - "8038:80"

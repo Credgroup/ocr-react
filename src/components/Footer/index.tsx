@@ -13,20 +13,19 @@ export default function Footer({ styles }: FooterProps) {
         <div className="brand_image relative w-40 sm:max-w-32">
           <img src={styles.logoImage} alt="Logo da empresa" />
         </div>
-        <div className="social_medias w-full max-w-40">
-          <h4
-            className="text-sm uppercase font-semibold mb-2"
-            style={{ color: styles.titleColor }}
-          >
-            Contato
-          </h4>
-          <ul
-            className="flex gap-1 flex-wrap justify-center sm:justify-start text-sm"
-            style={{ color: styles.textColor }}
-          >
-            {styles.contacts &&
-              styles.contacts.length > 0 &&
-              styles.contacts.map((item, i) =>
+        {styles.contacts && styles.contacts.length > 0 && (
+          <div className="social_medias w-full max-w-40">
+            <h4
+              className="text-sm uppercase font-semibold mb-2"
+              style={{ color: styles.titleColor }}
+            >
+              Contato
+            </h4>
+            <ul
+              className="flex gap-1 flex-wrap justify-center sm:justify-start text-sm"
+              style={{ color: styles.textColor }}
+            >
+              {styles.contacts.map((item, i) =>
                 item.type == "telefone" ? (
                   <li className="hover:underline" key={item.content + i}>
                     <a href={`tel:${item.content}`}>{item.content}</a>
@@ -37,8 +36,9 @@ export default function Footer({ styles }: FooterProps) {
                   </li>
                 )
               )}
-          </ul>
-        </div>
+            </ul>
+          </div>
+        )}
         <div className="placement w-full max-w-52">
           <h4
             className="text-sm uppercase font-semibold mb-2"
