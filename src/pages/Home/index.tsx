@@ -60,8 +60,7 @@ export default function Home() {
       try {
         const docsParamDecrypted = decrypt(docsParam);
         const docs = JSON.parse(docsParamDecrypted);
-        // return
-        // const docs = JSON.parse(decodeURIComponent(docsParam));
+
         docs.forEach((item: Doc) => {
           item.id = uuidv4();
           item.statusUpload = null;
@@ -70,7 +69,7 @@ export default function Home() {
         log("Parâmetro de docs:", docs);
         vrfy++;
       } catch (error) {
-        console.log(error);
+        log(error);
         toast({
           title: "Algum erro aconteceu",
           description: "O parâmetro docs está com algum problema",
@@ -130,9 +129,6 @@ export default function Home() {
       <span className="fixed bottom-6 text-black-100 capitalize">
         {enviroment} - v{appVersion}
       </span>
-      {/* {(enviroment == "development" || enviroment == "homologation") && (
-          <p>Você está em {enviroment}</p>
-        )} */}
     </div>
   );
 }
