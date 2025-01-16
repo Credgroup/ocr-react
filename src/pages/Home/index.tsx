@@ -7,6 +7,7 @@ import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "@/hooks/use-toast";
+import Loader from "@/components/Loader";
 
 export default function Home() {
   const setAuth = useAuthStore((state) => state.setAuth);
@@ -50,6 +51,7 @@ export default function Home() {
         toast({
           title: "Algum erro aconteceu",
           description: "O parâmetro info está com algum problema",
+          variant: "destructive",
         });
       }
     }
@@ -72,6 +74,7 @@ export default function Home() {
         toast({
           title: "Algum erro aconteceu",
           description: "O parâmetro docs está com algum problema",
+          variant: "destructive",
         });
       }
     }
@@ -103,6 +106,7 @@ export default function Home() {
           description: "O parâmetro theme está com algum problema",
           variant: "destructive",
         });
+        navigate("/authdenied", { replace: true });
       }
     }
 
@@ -116,13 +120,19 @@ export default function Home() {
   };
 
   return (
-    <>
-      <h1>
+    <div className="w-full h-screen flex justify-center items-center flex-col">
+      <div className="flex justify-center items-center gap-4">
+        <Loader />
+        <p className="text-black-400 font-semibold text-lg">
+          Carregando seus dados
+        </p>
+      </div>
+      <span className="fixed bottom-6 text-black-100 capitalize">
         {enviroment} - v{appVersion}
-        {(enviroment == "development" || enviroment == "homologation") && (
+      </span>
+      {/* {(enviroment == "development" || enviroment == "homologation") && (
           <p>Você está em {enviroment}</p>
-        )}
-      </h1>
-    </>
+        )} */}
+    </div>
   );
 }

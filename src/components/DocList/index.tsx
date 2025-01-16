@@ -4,7 +4,7 @@ import DocItem from "../DocItem";
 import UploadModal from "../UploadModal.tsx";
 import { Doc, updateDoc } from "@/types/index.ts";
 import { FileIconType } from "@/types";
-import { log } from "@/lib/utils.ts";
+import { formatFileSize, log } from "@/lib/utils.ts";
 import PreviewModal from "../PreviewModal/index.tsx";
 import { OptionMobileModal } from "../OptionsModal/index.tsx";
 import { CameraModal } from "../CameraModal/index.tsx";
@@ -46,18 +46,6 @@ export default function DocList() {
       setSelectedDoc(doc);
     }
     setIsOptionModalOpen(true);
-  };
-
-  const formatFileSize = (sizeInBytes: number): string => {
-    if (sizeInBytes < 1024) {
-      return `${sizeInBytes} Bytes`;
-    } else if (sizeInBytes < 1024 * 1024) {
-      return `${(sizeInBytes / 1024).toFixed(2)} KB`;
-    } else if (sizeInBytes < 1024 * 1024 * 1024) {
-      return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
-    } else {
-      return `${(sizeInBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
-    }
   };
 
   const handleUpload = (file: File) => {

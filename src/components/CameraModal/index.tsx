@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Camera } from "@/components/Camera"; // Importe o componente de câmera aqui
 import useDocStore from "@/stores/useDocStore"; // Adicionar import do Zustand
 import { FileIconType } from "@/types";
+import { formatFileSize } from "@/lib/utils";
 
 interface CameraModalProps {
   isModalOpen: boolean;
@@ -33,11 +34,27 @@ export const CameraModal: React.FC<CameraModalProps> = ({
   const handleConfirm = () => {
     if (photo && selectedDocId) {
       // Atualizar o Zustand com o novo arquivo
+
+      let [_, fileType] = photo.type.split("/");
+
+      const validFileTypes: FileIconType[] = [
+        "pdf",
+        "png",
+        "jpg",
+        "jpeg",
+        "unknown",
+      ];
+      const typeOfFile: FileIconType = validFileTypes.includes(
+        fileType as FileIconType
+      )
+        ? (fileType as FileIconType)
+        : "unknown";
+
       const newDoc = {
         checked: true,
-        description: `Foto capturada`,
+        description: `${photo.name} | ${formatFileSize(photo.size)}`,
         file: photo, // Utilizando o File diretamente
-        type: "jpg" as FileIconType, // Defina o tipo conforme necessário
+        type: typeOfFile, // Defina o tipo conforme necessário
       };
 
       updateDocFile(selectedDocId, newDoc); // Atualiza o arquivo no Zustand

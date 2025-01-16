@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 interface CameraProps {
   onCapture: (photo: File) => void; // Alterado para aceitar File
   facingMode?: "user" | "environment"; // Define a câmera: frontal ou traseira
@@ -57,12 +57,13 @@ export const Camera = ({
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const photoDataUrl = canvas.toDataURL("image/png");
+      const generedIdImage = uuidv4()
 
       // Converter DataURL para File
       fetch(photoDataUrl)
         .then((res) => res.blob()) // Obtém o blob da imagem
         .then((blob) => {
-          const file = new File([blob], "captured-photo.png", {
+          const file = new File([blob], `photo-${generedIdImage}.png`, {
             type: "image/png",
           });
           onCapture(file); // Passa o File para o callback
