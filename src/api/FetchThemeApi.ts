@@ -1,5 +1,6 @@
 import { decrypt, getFetchHeaders } from "@/lib/utils";
 import axios from "axios";
+import { log } from "@/lib/utils";
 
 type themApiProps = {
   idwhitelabel: string | number;
@@ -17,7 +18,7 @@ export default async function fetchThemeApi({
   };
 
   try {
-    const res = await axios.post(
+    const res: any = await axios.post(
       `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/whitelabel/consultar`,
       parameters,
       header
@@ -27,6 +28,12 @@ export default async function fetchThemeApi({
       throw new Error(`Erro: Status da resposta ${res.status}`);
     }
 
+    if(res.data.sucesso == false){
+      log(res.data)
+      throw new Error(`${res.data.mensagem}`)
+    }
+
+    log(res.data)
     const decry = decrypt(res.data);
     const data = JSON.parse(decry);
     return data;
