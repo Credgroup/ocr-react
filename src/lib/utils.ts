@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from "axios";
 import { clsx, type ClassValue } from "clsx";
 import CryptoJS from "crypto-js";
 import { twMerge } from "tailwind-merge";
@@ -82,4 +83,43 @@ export const formatFileSize = (sizeInBytes: number): string => {
   } else {
     return `${(sizeInBytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
   }
+};
+
+export const completeToken = (token: string) => {
+  const newDate = new Date();
+  const d = newDate.getDate();
+  const m = (newDate.getMonth() + 1).toString().padStart(2, "0");
+  const y = newDate.getFullYear();
+  const h = newDate.getHours();
+  const finalToken = `${token}${y}${m}${d}${h}`;
+  return finalToken;
+};
+
+export const getFetchHeaders = (contentType?: string) => {
+  const token = completeToken(import.meta.env.VITE_TOKEN_BAREAR);
+  if (contentType) {
+    const header: AxiosRequestConfig = {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Strict-Transport-Security":
+          "max-age=2592000; includeSubDomains; preload",
+        "Content-Type": contentType,
+        Authorization: `bearer ${token}`,
+      },
+    };
+    return header;
+  }
+
+  const header: AxiosRequestConfig = {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+      "Strict-Transport-Security":
+        "max-age=2592000; includeSubDomains; preload",
+      "Content-Type": "application/json",
+      Authorization: token,
+    },
+  };
+  return header;
 };

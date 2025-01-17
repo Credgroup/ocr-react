@@ -21,6 +21,12 @@ type PageContent = {
 type UpdateHeaderStyles = Partial<HeaderStyles>;
 type UpdateFooterStyles = Partial<FooterStyles>;
 type updatePageContent = Partial<PageContent>;
+
+export type stylesTheme = {
+  headerStyles: HeaderStyles;
+  footerStyles: FooterStyles;
+  pageContent: PageContent;
+};
 // type UpdateFooterContent = Partial<FooterContent>;
 
 // Criação da store usando Zustand

@@ -1,5 +1,7 @@
 export type AuthType = {
   name: string;
+  theme: string | number;
+  docsId: string | number;
   idSegurado: string;
   idSeguro: string;
   idSinistroCobertura: string;
@@ -24,23 +26,40 @@ export type FooterStyles = {
 };
 
 export type FileIconType = "pdf" | "png" | "jpg" | "unknown" | "jpeg";
+
 export type statusUploadType = "pending" | "success" | "error" | null;
+
 export type Doc = {
   id: string;
   Nome: string;
   type: FileIconType;
-  CampoApi: string;
+  file: File | null;
   checked: boolean;
   description: string | null;
-  file: File | null;
+  CampoApi: string;
+  statusUpload?: statusUploadType;
+  CamposExtrairOcr?: string | null;
+  ChaveDocumento?: string | null;
+  ContentTypeFile?: string | null;
+  DestinatarioFile?: string | null;
+  Fixo?: boolean;
+  IdSegurado?: number;
+  IdSeguro?: number;
+  IdSinistro?: number;
+  IdSinistroCobertura?: number;
+  IdUsuario?: number;
   ModelClassificarOcr?: string | null;
   ModelExtrairOcr?: string | null;
-  CamposExtrairOcr?: string[] | null;
-  ChaveDocumento?: string | null;
-  TpDocumento?: string | null;
+  NameFile?: string | null;
+  Obrigatorio?: boolean;
+  ObrigatorioInicial?: boolean;
+  PathFile?: string | null;
+  PercentualOcr?: number;
+  Qtd?: string;
   TipoDocOcr?: string | null;
-  Obrigatorio?: boolean | null;
-  statusUpload?: statusUploadType;
+  TpDocumento?: string | null;
+  Type?: string;
+  Visual?: boolean;
 };
 
 export type updateDoc = Partial<Doc>;
