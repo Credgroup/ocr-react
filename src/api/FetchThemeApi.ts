@@ -18,7 +18,7 @@ export default async function fetchThemeApi({
 
   try {
     const res = await axios.post(
-      `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/whitelabel/consltar`,
+      `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/whitelabel/consultar`,
       parameters,
       header
     );

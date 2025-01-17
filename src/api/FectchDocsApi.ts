@@ -17,7 +17,7 @@ export default async function fetchDocsApi({
 
   try {
     const res = await axios.post(
-      `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/layou/consultar`,
+      `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/layout/consultar`,
       parameters,
       header
     );
