@@ -39,20 +39,22 @@ export default function Footer({ styles }: FooterProps) {
             </ul>
           </div>
         )}
-        <div className="placement w-full max-w-52">
-          <h4
-            className="text-sm uppercase font-semibold mb-2"
-            style={{ color: styles.titleColor }}
-          >
-            Endereço
-          </h4>
-          <p
-            className="text-sm font-regular"
-            style={{ color: styles.textColor }}
-          >
-            {styles.address}
-          </p>
-        </div>
+        {styles.address && (
+          <div className="placement w-full max-w-52">
+            <h4
+              className="text-sm uppercase font-semibold mb-2"
+              style={{ color: styles.titleColor }}
+            >
+              Endereço
+            </h4>
+            <p
+              className="text-sm font-regular"
+              style={{ color: styles.textColor }}
+            >
+              {styles.address}
+            </p>
+          </div>
+        )}
       </SmallContainer>
     </ScreenContainer>
   );
