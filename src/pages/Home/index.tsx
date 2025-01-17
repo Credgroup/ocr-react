@@ -84,6 +84,8 @@ export default function Home() {
       setPageContent(themeData.pageContent);
     },
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity, 
   } as UseQueryOptions<any, Error, stylesTheme>);
 
   // Consulta de documentos (Docs)
@@ -111,6 +113,8 @@ export default function Home() {
       }
     },
     retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: Infinity, 
   } as UseQueryOptions<any, Error, Doc[]>);
 
   useEffect(() => {
