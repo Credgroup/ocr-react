@@ -90,7 +90,7 @@ export const completeToken = (token: string) => {
   const d = newDate.getDate();
   const m = (newDate.getMonth() + 1).toString().padStart(2, "0");
   const y = newDate.getFullYear();
-  const h = newDate.getHours();
+  const h = newDate.getHours().toString().padStart(2, "0");
   const finalToken = `${token}${y}${m}${d}${h}`;
   return finalToken;
 };
