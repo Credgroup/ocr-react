@@ -12,12 +12,14 @@ export default function DocsPage() {
   const auth = useAuthStore((state) => state.auth);
   const footerStylesProp = useThemeStore((state) => state.footerStyles);
   const headerStylesProp = useThemeStore((state) => state.headerStyles);
+  const pageStyle = useThemeStore((state) => state.pageContent);
 
   return (
     <ScreenContainer className="min-h-screen bg-white-200">
       <Header headerStyles={headerStylesProp && headerStylesProp} />
       <SmallContainer className="mb-12 px-4 md:px-0">
         <Avatar />
+        <p className="uppercase text-xs leading-none mb-2" style={{color: pageStyle.buttonColor}}>Atenção: Link valido por 24 horas*</p>
         <h1 className="text-2xl font-bold leading-none">Olá {auth?.name}!</h1>
         <p className="text-base mb-6 mt-3">
           Recebemos a sua solicitação de uso da cobertura{" "}
@@ -29,7 +31,7 @@ export default function DocsPage() {
         </p>
         <div className="flex flex-row justify-start gap-20 mb-6 ">
           <div className="item flex flex-row gap-2 justify-start items-start">
-            <FiShield />
+            <FiShield style={{color: pageStyle.buttonColor, minWidth: "24px"}}/>
             <div className="flex flex-col gap-1">
               <h3 className="uppercase text-sm font-bold leading-none">
                 Cobertura
@@ -38,7 +40,7 @@ export default function DocsPage() {
             </div>
           </div>
           <div className="item flex flex-row gap-2 justify-start items-start">
-            <FiCalendar />
+            <FiCalendar style={{color: pageStyle.buttonColor, minWidth: "24px"}}/>
             <div className="flex flex-col gap-1">
               <h3 className="uppercase text-sm font-bold leading-none">
                 Data da solicitação

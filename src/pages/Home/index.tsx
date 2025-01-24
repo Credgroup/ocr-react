@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import useAuthStore from "@/stores/authentication";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthType, Doc } from "@/types";
 import { decrypt, formatDate, log } from "@/lib/utils";
@@ -23,14 +23,17 @@ export default function Home() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const authParams = params.get("info");
+  const [authError, setAuthError] = useState(false)
 
   const enviroment = import.meta.env.VITE_ENVIRONMENT_VARIABLE;
   const appVersion = import.meta.env.VITE_IMAGE_VERSION;
 
   useEffect(() => {
     if (authParams) {
+      setAuthError(false)
       try {
         const authParamsDecrypted = decrypt(authParams);
+        log('aqui')
         const authParamsObj = JSON.parse(authParamsDecrypted);
         log(authParamsObj);
         const authObj: AuthType = {
@@ -50,6 +53,7 @@ export default function Home() {
         setAuth(authObj);
       } catch (error) {
         log(error);
+        setAuthError(true)
         toast({
           title: "Algum erro aconteceu",
           description: "O parâmetro info está com algum problema",
@@ -183,6 +187,20 @@ export default function Home() {
           </span>
         </div>
       )}
+      {
+        authError && (
+          <div className="w-full h-screen flex justify-center items-center flex-col">
+          <div className="flex justify-center items-center gap-4">
+            <p className="text-black-400 font-semibold text-lg text-center">
+              Aconteceu algum problema na hora de processar seus dados.
+            </p>
+          </div>
+          <span className="fixed bottom-6 text-black-100 capitalize">
+            {enviroment} - v{appVersion}
+          </span>
+        </div>
+        )
+      }
     </>
   );
 }
