@@ -18,7 +18,7 @@ export default function UploadModal({
   isOpen,
   onClose,
   onUpload,
-}: UploadModalProps) {
+}: Readonly<UploadModalProps>) {
   const [file, setFile] = useState<File | null>(null);
 
   // Função para tratar a seleção do arquivo

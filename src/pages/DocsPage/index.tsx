@@ -16,7 +16,7 @@ export default function DocsPage() {
 
   return (
     <ScreenContainer className="min-h-screen bg-white-200">
-      <Header headerStyles={headerStylesProp && headerStylesProp} />
+      <Header headerStyles={!!headerStylesProp && headerStylesProp} />
       <SmallContainer className="mb-12 px-4 md:px-0">
         <Avatar />
         <p className="uppercase text-xs leading-none mb-2" style={{color: pageStyle.buttonColor}}>Atenção: Link valido por 24 horas*</p>

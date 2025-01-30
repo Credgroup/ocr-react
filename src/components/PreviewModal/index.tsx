@@ -17,7 +17,7 @@ export default function PreviewModal({
   isOpen,
   onClose,
   file,
-}: PreviewModalProps) {
+}: Readonly<PreviewModalProps>) {
   if (!file) return null;
 
   const fileURL = URL.createObjectURL(file);

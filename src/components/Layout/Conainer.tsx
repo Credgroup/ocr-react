@@ -11,7 +11,7 @@ export function SmallContainer({
   className,
   children,
   ...props
-}: ContainerProps) {
+}: Readonly<ContainerProps>) {
   return (
     <div className={clsx(" max-w-[560px] w-full", className)} {...props}>
       {children}

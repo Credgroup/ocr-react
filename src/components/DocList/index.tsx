@@ -149,7 +149,7 @@ export default function DocList() {
           <DocItem.ContentContainer>
             <DocItem.FileIcon
               type={doc.file ? doc.type : "unknown"} // Mostra o ícone de arquivo enviado ou desconhecido
-              checked={doc.file ? true : false}
+              checked={!!doc.file}
             />
             <DocItem.ContentText
               title={doc.Nome}

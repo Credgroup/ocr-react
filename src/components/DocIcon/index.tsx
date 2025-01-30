@@ -6,7 +6,7 @@ export type DocIconProps = {
   checked?: boolean;
 };
 
-export default function DocIcon({ type, checked }: DocIconProps) {
+export default function DocIcon({ type, checked }: Readonly<DocIconProps>) {
   return (
     <div className="relative flex justify-center items-center aspect-square min-w-12 rounded-lg bg-white-500">
       {checked && (
