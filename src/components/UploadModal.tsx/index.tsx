@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 import {
@@ -23,6 +23,7 @@ export default function UploadModal({
   onUpload,
 }: Readonly<UploadModalProps>) {
   const [file, setFile] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   // Função para tratar a seleção do arquivo
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,23 +31,22 @@ export default function UploadModal({
 
     if (selectedFile) {
       // Verifica a extensão do arquivo e o tipo MIME
-      const allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
-      const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
+      const fileExtension = selectedFile.type;
       const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
 
-      if (
-        fileExtension &&
-        allowedExtensions.includes(`.${fileExtension}`) &&
-        allowedMimeTypes.includes(selectedFile.type)
-      ) {
+      if (allowedMimeTypes.includes(fileExtension)) {
         setFile(selectedFile);
       } else {
-        setFile(null);
         toast({
           title: "Arquivo não suportado",
           description: "Envie apenas arquivos JPG, JPEG, PNG ou PDF.",
           variant: "destructive",
-        }); }
+        }); 
+        setFile(null);
+        if(inputRef && inputRef.current) {
+          inputRef.current.value = '' 
+        }
+      }
     }
   };
 
@@ -71,6 +71,7 @@ export default function UploadModal({
 
         <div className="mt-4">
           <input
+            ref={inputRef}
             type="file"
             accept=".pdf, .png, .jpg, .jpeg"
             onChange={handleFileChange}
