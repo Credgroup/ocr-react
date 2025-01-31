@@ -169,7 +169,7 @@ export default function DocList() {
                   dispatch={() => openPreviewModal(doc.file)}
                 />
               )}
-            {isMobile ? (
+            {isMobile && (
               doc.file && doc.statusUpload == null ? (
                 <DocItem.Action
                   type="option-mobile"
@@ -183,14 +183,15 @@ export default function DocList() {
                   />
                 )
               )
-            ) : (
-              doc.statusUpload == null && (
-                <DocItem.Action
-                  type="upload-destop"
-                  dispatch={() => openUploadModal(doc.id)}
-                />
-              )
             )}
+            {
+              !isMobile && doc.statusUpload == null && (
+                  <DocItem.Action
+                    type="upload-destop"
+                    dispatch={() => openUploadModal(doc.id)}
+                  />
+                )
+            }
           </DocItem.Actions>
         </DocItem.Root>
       ))}

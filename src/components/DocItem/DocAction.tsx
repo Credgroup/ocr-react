@@ -24,7 +24,7 @@ type DocActionProps = {
   dispatch?: () => void;
 };
 
-export default function DocAction({ type, dispatch }: DocActionProps) {
+export default function DocAction({ type, dispatch }: Readonly<DocActionProps>) {
   if (type == "upload-destop") {
     return (
       <Button

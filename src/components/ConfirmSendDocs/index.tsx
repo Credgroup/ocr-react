@@ -85,7 +85,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   
         log("FormData Enviado:");
         formData.forEach((value, key) => {
-          log(`${key}: ${value.toString()}`);
+          log(`${key}: ${value}`);
         });
   
         try {
