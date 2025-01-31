@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
+
 import {
   Dialog,
   DialogTrigger,
@@ -7,6 +9,7 @@ import {
   DialogDescription,
   DialogClose,
 } from "../ui/dialog";
+import { log } from "@/lib/utils";
 
 type UploadModalProps = {
   isOpen: boolean;
@@ -24,13 +27,33 @@ export default function UploadModal({
   // Função para tratar a seleção do arquivo
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
-    setFile(selectedFile);
+
+    if (selectedFile) {
+      // Verifica a extensão do arquivo e o tipo MIME
+      const allowedExtensions = [".jpg", ".jpeg", ".png", ".pdf"];
+      const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase();
+      const allowedMimeTypes = ["image/jpeg", "image/png", "application/pdf"];
+
+      if (
+        fileExtension &&
+        allowedExtensions.includes(`.${fileExtension}`) &&
+        allowedMimeTypes.includes(selectedFile.type)
+      ) {
+        setFile(selectedFile);
+      } else {
+        setFile(null);
+        toast({
+          title: "Arquivo não suportado",
+          description: "Envie apenas arquivos JPG, JPEG, PNG ou PDF.",
+          variant: "destructive",
+        }); }
+    }
   };
 
   // Função para enviar o arquivo
   const handleUpload = () => {
     if (file) {
-      console.log("Arquivo carregado:", file);
+      log("Arquivo carregado:", file);
       onUpload(file); // Atualiza o arquivo no estado global (Zustand)
       onClose(); // Fecha o modal após o upload
       setFile(null);
@@ -43,8 +66,7 @@ export default function UploadModal({
       <DialogContent className="w-full max-w-[500px] p-6 rounded-lg shadow-lg">
         <DialogTitle>Faça o Upload do Documento</DialogTitle>
         <DialogDescription>
-          Selecione o arquivo para o upload. Após o envio, ele será associado ao
-          seu documento.
+          Selecione o arquivo para o upload. Apenas arquivos JPG, JPEG, PNG e PDF são permitidos.
         </DialogDescription>
 
         <div className="mt-4">
@@ -54,6 +76,7 @@ export default function UploadModal({
             onChange={handleFileChange}
             className="border p-2 rounded w-full"
           />
+          
         </div>
 
         <div className="mt-4 flex justify-end">
