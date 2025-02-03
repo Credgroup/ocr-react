@@ -7,12 +7,11 @@ import useThemeStore from "@/stores/useThemeStore";
 import axios, { AxiosRequestConfig } from "axios";
 import useAuthStore from "@/stores/authentication";
 import { log } from "@/lib/utils";
-import { FiAlertTriangle, FiCheckCircle } from "react-icons/fi";
-import { FiRotateCw } from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiRotateCw } from "react-icons/fi";
 import { Doc } from "@/types";
 
 type ConfirmSendDocsProps = {
-  className?: string;
+  readonly className?: string;
 };
 
 type reqStatusType = {
@@ -146,7 +145,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   useEffect(() => {
     const hasAtLeastOneDoc = docs?.some((item) => item.file !== undefined && item.statusUpload !== "success");
     const hasDocNotUploaded = docs?.some((item) => item.file == undefined || item.file == null)
-    setResendMessageButton(hasDocNotUploaded ? true : false)
+    setResendMessageButton(!!hasDocNotUploaded)
     if (hasAtLeastOneDoc && isChecked) {
       setDisableButton(false);
     } else {
@@ -157,7 +156,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
 
   return (
     <div className={clsx("flex flex-col gap-4", className)}>
-      <label htmlFor="TermsCheckBox" className="flex items-center gap-3">
+      <label htmlFor="TermsCheckBox" className="flex items-center gap-3" id="TermsAndConditions">
         <Checkbox
           id="TermsCheckBox"
           checked={isChecked}
@@ -165,10 +164,9 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
         />
         <span>
           Eu declaro que li e aceito os{" "}
-          <a href="#" className="font-bold hover:underline">
+          <a href="#TermsAndConditions" className="font-bold hover:underline">
             termos e condições
-          </a>
-          .
+          </a>.
         </span>
       </label>
 

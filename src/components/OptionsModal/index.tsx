@@ -22,7 +22,7 @@ export function OptionMobileModal({
   setIsModalOpen,
   actions,
   type,
-}: OptionMobileModalProps) {
+}: Readonly<OptionMobileModalProps>) {
   const [uploadModal, previewModal, cameraModal] = actions;
 
   const handleAction = (action: string) => {

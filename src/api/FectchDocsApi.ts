@@ -1,6 +1,5 @@
-import { decrypt, getFetchHeaders } from "@/lib/utils";
+import { decrypt, getFetchHeaders, log } from "@/lib/utils";
 import axios from "axios";
-import { log } from "@/lib/utils";
 
 type docsApiProps = {
   idusuario: string | number;
@@ -27,12 +26,12 @@ export default async function fetchDocsApi({
       throw new Error(`Erro: Status da resposta ${res.status}`);
     }
 
-    if(res.data.sucesso == false){
-      log(res.data)
+    if(res.data.sucesso){
+      log(res)
       throw new Error(`${res.data.mensagem}`)
     }
 
-    log(res.data)
+    log(res)
     const decry = decrypt(res.data);
     const data = JSON.parse(decry);
     return data;

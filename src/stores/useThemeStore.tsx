@@ -1,6 +1,5 @@
 import { FooterStyles } from "@/types";
 import { create } from "zustand";
-// Tipos para os estilos do Header e Footer
 type BackgroundType = "img" | "color";
 
 type HeaderStyles = {
@@ -27,7 +26,6 @@ export type stylesTheme = {
   footerStyles: FooterStyles;
   pageContent: PageContent;
 };
-// type UpdateFooterContent = Partial<FooterContent>;
 
 // Criação da store usando Zustand
 const useThemeStore = create<{

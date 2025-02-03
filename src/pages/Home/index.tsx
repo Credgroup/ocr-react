@@ -32,8 +32,9 @@ export default function Home() {
     if (authParams) {
       setAuthError(false)
       try {
+        log("parametro info:")
         const authParamsDecrypted = decrypt(authParams);
-        log('aqui')
+        log(authParamsDecrypted)
         const authParamsObj = JSON.parse(authParamsDecrypted);
         log(authParamsObj);
         const authObj: AuthType = {
@@ -145,7 +146,7 @@ export default function Home() {
   }, [docsSuccess]);
 
   if (themeErrorObj) {
-    console.log(themeErrorObj);
+    log(themeErrorObj);
   }
 
   const redirect = () => {

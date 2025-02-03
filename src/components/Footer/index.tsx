@@ -3,7 +3,7 @@ import { FooterStyles } from "@/types";
 
 type FooterProps = { styles: FooterStyles };
 
-export default function Footer({ styles }: FooterProps) {
+export default function Footer({ styles }: Readonly<FooterProps>) {
   return (
     <ScreenContainer
       className={`py-6 mt-auto`}

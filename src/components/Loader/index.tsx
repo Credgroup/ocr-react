@@ -5,7 +5,7 @@ interface LoaderProps {
   className?: string;
 }
 
-export default function Loader({ size = 24, className }: LoaderProps) {
+export default function Loader({ size = 24, className }: Readonly<LoaderProps>) {
   return (
     <div
       className="relative flex justify-center items-center"

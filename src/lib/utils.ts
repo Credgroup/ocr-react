@@ -87,7 +87,7 @@ export const formatFileSize = (sizeInBytes: number): string => {
 
 export const completeToken = (token: string) => {
   const newDate = new Date();
-  const d = newDate.getDate();
+  const d = newDate.getDate().toString().padStart(2, "0");
   const m = (newDate.getMonth() + 1).toString().padStart(2, "0");
   const y = newDate.getFullYear();
   const h = newDate.getHours().toString().padStart(2, "0");

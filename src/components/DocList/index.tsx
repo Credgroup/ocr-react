@@ -149,7 +149,7 @@ export default function DocList() {
           <DocItem.ContentContainer>
             <DocItem.FileIcon
               type={doc.file ? doc.type : "unknown"} // Mostra o ícone de arquivo enviado ou desconhecido
-              checked={doc.file ? true : false}
+              checked={!!doc.file}
             />
             <DocItem.ContentText
               title={doc.Nome}
@@ -169,7 +169,7 @@ export default function DocList() {
                   dispatch={() => openPreviewModal(doc.file)}
                 />
               )}
-            {isMobile ? (
+            {isMobile && (
               doc.file && doc.statusUpload == null ? (
                 <DocItem.Action
                   type="option-mobile"
@@ -183,14 +183,15 @@ export default function DocList() {
                   />
                 )
               )
-            ) : (
-              doc.statusUpload == null && (
-                <DocItem.Action
-                  type="upload-destop"
-                  dispatch={() => openUploadModal(doc.id)}
-                />
-              )
             )}
+            {
+              !isMobile && doc.statusUpload == null && (
+                  <DocItem.Action
+                    type="upload-destop"
+                    dispatch={() => openUploadModal(doc.id)}
+                  />
+                )
+            }
           </DocItem.Actions>
         </DocItem.Root>
       ))}

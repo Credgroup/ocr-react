@@ -7,7 +7,7 @@ type PageGuardProps = {
   auth: AuthType | null;
 };
 
-export default function PageGuard({ Page, auth }: PageGuardProps) {
+export default function PageGuard({ Page, auth }: Readonly<PageGuardProps>) {
   const navigate = useNavigate();
   useEffect(() => {
     if (!auth) {
