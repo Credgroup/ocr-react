@@ -9,6 +9,7 @@ import useAuthStore from "@/stores/authentication";
 import { log } from "@/lib/utils";
 import { FiAlertTriangle, FiCheckCircle, FiRotateCw } from "react-icons/fi";
 import { Doc } from "@/types";
+import { useUploadDocs } from "@/hooks/useSendDocs";
 
 type ConfirmSendDocsProps = {
   readonly className?: string;
@@ -22,8 +23,8 @@ type reqStatusType = {
 export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   const [isChecked, setIsChecked] = useState(false);
   const auth = useAuthStore((state) => state.auth);
-  const [disabledButton, setDisableButton] = useState(true);
   const [resendMessageButton, setResendMessageButton] = useState(false);
+  const [shouldDisableButton, setShouldDisableButton] = useState(true);
   const docs = useDocStore((state) => state.docs);
   const updateDoc = useDocStore((state) => state.updateDocFile);
   const theme = useThemeStore((state) => state.pageContent);
@@ -32,131 +33,41 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
     msg: null,
   });
 
-  const handleSendFiles = async () => {
-    console.log("Enviando documentos...");
-    console.log(docs);
-  
-    const selectDocs = docs?.filter(
-      (item) => item.file && item.statusUpload !== "success"
-    );
-  
-    if (selectDocs) {
-      const header: AxiosRequestConfig = {
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Strict-Transport-Security":
-            "max-age=2592000; includeSubDomains; preload",
-          "Content-Type": "multipart/form-data",
-          Authorization: "bearer ",
-        },
-      };
-  
-      let errorCount = 0;
+  const {
+    mutate: sendDocs,
+    isPending: isLoading,
+    isError,
+    error,
+    isSuccess,
+  } = useUploadDocs();
 
-      const uploadPromises = selectDocs.map(async (item: Doc) => {
-        log("Estrutura do documento: " + item.CampoApi);
-        log(item);
-        updateDoc(item.id, { statusUpload: "pending" });
-  
-        const formData = new FormData();
-  
-        let obj = {
-          ChaveDocumento: item.CampoApi,
-          tpDocumento: item.TpDocumento,
-          ModelClassificarOcr: item.ModelClassificarOcr,
-          ModelExtrairOcr: item.ModelExtrairOcr,
-          CamposExtrairOcr: item.CamposExtrairOcr,
-          idSinistro: auth?.idSinistro,
-          idSegurado: auth?.idSegurado,
-          idSinistroCobertura: auth?.idSinistroCobertura,
-          idSeguro: auth?.idSeguro,
-          idUsuario: auth?.idUsuario,
-        };
-  
-        log("Parametros do documento: " + item.CampoApi);
-        log(obj);
-        const params = JSON.stringify(obj);
-  
-        formData.append("Conf", params);
-        if (item?.file) {
-          formData.append("Files", item.file);
-        }
-  
-        log("FormData Enviado:");
-        formData.forEach((value, key) => {
-          log(`${key}: ${value}`);
-        });
-  
-        try {
-          const res = await axios.post(
-            `${import.meta.env.VITE_API_ENDPOINT}/api/keepins/v1/cobertura/documento/ocr/externo/importar`,
-            formData,
-            header
-          );
-  
-          console.log(res);
-          if (!res.data.sucesso) {
-            throw new Error(res.data.mensagem);
-          }
-  
-          updateDoc(item.id, { statusUpload: "success" });
-        } catch (err: any) {
-          console.log(err);
-          updateDoc(item.id, { statusUpload: "error" });
-          errorCount++;
-        }
-      });
-  
-      try {
-        await Promise.all(uploadPromises);
-  
-        if (errorCount > 0) {
-          setReqStatus({
-            state: "error",
-            msg: "Um ou mais documentos falharam no envio.",
-          });
-        } else {
-          setReqStatus({
-            state: "success",
-            msg: "Todos os documentos selecionados foram enviados com sucesso!",
-          });
-        }
-      } catch (err) {
-        console.error("Erro geral no envio de documentos:", err);
-        setReqStatus({
-          state: "error",
-          msg: "Houve um erro no envio dos documentos.",
-        });
-      }
-    }
-  };
-  
-  
   const handleChangeChecked = () => {
     setIsChecked(!isChecked);
   };
 
   const handleRefetchDocs = () => {
     log("Refetch");
-    handleSendFiles();
+    sendDocs();
   };
 
   useEffect(() => {
-    const hasAtLeastOneDoc = docs?.some((item) => item.file !== undefined && item.statusUpload !== "success");
-    const hasDocNotUploaded = docs?.some((item) => item.file == undefined || item.file == null)
-    setResendMessageButton(!!hasDocNotUploaded)
-    if (hasAtLeastOneDoc && isChecked) {
-      setDisableButton(false);
-    } else {
-      setDisableButton(true);
-    }
-  }, [docs, isChecked]);
+    const hasPendingDocs = docs?.some(
+      (doc) => doc.file && doc.statusUpload !== "success"
+    );
+    // const hasRequiredDocsNotUploaded = docs?.some(
+    //   (doc) => doc.Obrigatorio && !doc.file
+    // );
 
+    setShouldDisableButton(!hasPendingDocs || !isChecked || isLoading);
+  }, [docs, isChecked, isLoading]);
 
   return (
     <div className={clsx("flex flex-col gap-4", className)}>
-      <label htmlFor="TermsCheckBox" className="flex items-center gap-3" id="TermsAndConditions">
+      <label
+        htmlFor="TermsCheckBox"
+        className="flex items-center gap-3"
+        id="TermsAndConditions"
+      >
         <Checkbox
           id="TermsCheckBox"
           checked={isChecked}
@@ -166,15 +77,16 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           Eu declaro que li e aceito os{" "}
           <a href="#TermsAndConditions" className="font-bold hover:underline">
             termos e condições
-          </a>.
+          </a>
+          .
         </span>
       </label>
 
-      {reqStatus.state == null && (
+      {!isError && !isSuccess && (
         <div className="flex justify-end">
           <Button
-            onClick={() => handleSendFiles()}
-            disabled={disabledButton}
+            onClick={() => sendDocs()}
+            disabled={isLoading}
             style={{
               background: theme.buttonColor,
               color: theme.textButtonColor,
@@ -184,7 +96,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           </Button>
         </div>
       )}
-      {reqStatus.state == "error" && (
+      {isError && (
         <div className="w-full min-h-12 px-4 py-3 gap-4 flex justify-between items-center border border-yellow-300 bg-yellow-300 bg-opacity-30 rounded-xl">
           <div className="flex items-center justify-start gap-4">
             <FiAlertTriangle
@@ -192,12 +104,12 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
               className="text-yellow-600 min-w-7"
             />
             <h1 className="font-semibold text-black-700 text-md">
-              {reqStatus.msg || "Algum erro aconteceu no envio dos documentos"}
+              {error.message || "Algum erro aconteceu no envio dos documentos"}
             </h1>
           </div>
           <Button
             variant={"warning"}
-            disabled={disabledButton}
+            disabled={shouldDisableButton}
             onClick={() => handleRefetchDocs()}
           >
             <FiRotateCw />
@@ -205,7 +117,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           </Button>
         </div>
       )}
-      {reqStatus.state == "success" && (
+      {isSuccess && (
         <div className="w-full min-h-12 px-4 py-3 gap-4 flex justify-between items-center border border-lime-300 bg-lime-300 bg-opacity-30 rounded-xl">
           <div className="flex items-center justify-start gap-4">
             <FiCheckCircle
@@ -225,7 +137,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
             </div>
           </div>
           <Button
-            disabled={disabledButton}
+            disabled={shouldDisableButton}
             onClick={() => handleRefetchDocs()}
             style={{
               background: theme.buttonColor,
