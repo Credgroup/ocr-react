@@ -4,11 +4,11 @@ import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import useDocStore from "@/stores/useDocStore";
 import useThemeStore from "@/stores/useThemeStore";
-import axios, { AxiosRequestConfig } from "axios";
-import useAuthStore from "@/stores/authentication";
+// import axios, { AxiosRequestConfig } from "axios";
+// import useAuthStore from "@/stores/authentication";
 import { log } from "@/lib/utils";
 import { FiAlertTriangle, FiCheckCircle, FiRotateCw } from "react-icons/fi";
-import { Doc } from "@/types";
+// import { Doc } from "@/types";
 import { useUploadDocs } from "@/hooks/useSendDocs";
 
 type ConfirmSendDocsProps = {
@@ -22,13 +22,13 @@ type reqStatusType = {
 
 export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
   const [isChecked, setIsChecked] = useState(false);
-  const auth = useAuthStore((state) => state.auth);
-  const [resendMessageButton, setResendMessageButton] = useState(false);
+  // const auth = useAuthStore((state) => state.auth);
+  const [resendMessageButton] = useState(false);
   const [shouldDisableButton, setShouldDisableButton] = useState(true);
   const docs = useDocStore((state) => state.docs);
-  const updateDoc = useDocStore((state) => state.updateDocFile);
+  // const updateDoc = useDocStore((state) => state.updateDocFile);
   const theme = useThemeStore((state) => state.pageContent);
-  const [reqStatus, setReqStatus] = useState<reqStatusType>({
+  const [reqStatus] = useState<reqStatusType>({
     state: null,
     msg: null,
   });
