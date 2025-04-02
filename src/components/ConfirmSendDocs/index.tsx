@@ -60,6 +60,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
 
     setShouldDisableButton(!hasPendingDocs || !isChecked || isLoading);
   }, [docs, isChecked, isLoading]);
+  
 
   return (
     <div className={clsx("flex flex-col gap-4", className)}>
@@ -86,7 +87,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
         <div className="flex justify-end">
           <Button
             onClick={() => sendDocs()}
-            disabled={isLoading}
+            disabled={shouldDisableButton}
             style={{
               background: theme.buttonColor,
               color: theme.textButtonColor,
