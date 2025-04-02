@@ -78,8 +78,7 @@ export default function ConfirmSendDocs({ className }: ConfirmSendDocsProps) {
           Eu declaro que li e aceito os{" "}
           <a href="#TermsAndConditions" className="font-bold hover:underline">
             termos e condições
-          </a>
-          .
+          </a>.
         </span>
       </label>
 
