@@ -25,6 +25,7 @@ const uploadDoc = async (doc: Doc, auth: any) => {
     ChaveDocumento: doc.CampoApi,
     tpDocumento: doc.TpDocumento,
     ModelClassificarOcr: doc.ModelClassificarOcr,
+    naoPermitirReprovacao: doc.NaoPermitirReprovacao,
     ModelExtrairOcr: doc.ModelExtrairOcr,
     CamposExtrairOcr: doc.CamposExtrairOcr,
     idSinistro: auth?.idSinistro,
