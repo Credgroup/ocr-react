@@ -49,6 +49,7 @@ export type Doc = {
   IdSinistroCobertura?: number;
   IdUsuario?: number;
   ModelClassificarOcr?: string | null;
+  NaoPermitirReprovacao?: boolean | null;
   ModelExtrairOcr?: string | null;
   NameFile?: string | null;
   Obrigatorio?: boolean;
