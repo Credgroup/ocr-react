@@ -33,6 +33,7 @@ const uploadDoc = async (doc: Doc, auth: any) => {
     idSinistroCobertura: auth?.idSinistroCobertura,
     idSeguro: auth?.idSeguro,
     idUsuario: auth?.idUsuario,
+    tpOrigemCadastro: 20919
   });
 
   formData.append("Conf", params);
