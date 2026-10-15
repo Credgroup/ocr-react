@@ -1,21 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import useAuthStore from "@/stores/authentication";
 import useDocStore from "@/stores/useDocStore";
 import { Doc } from "@/types";
-import { log } from "@/lib/utils";
+import { getFetchHeaders, log } from "@/lib/utils";
 
 const uploadDoc = async (doc: Doc, auth: any) => {
-  const header: AxiosRequestConfig = {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Strict-Transport-Security":
-        "max-age=2592000; includeSubDomains; preload",
-      "Content-Type": "multipart/form-data",
-      Authorization: "bearer ",
-    },
-  };
+  const header = getFetchHeaders("multipart/form-data");
 
   log("Estrutura do documento: " + doc.CampoApi);
   log(doc);

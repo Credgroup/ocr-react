@@ -87,10 +87,27 @@ export const formatFileSize = (sizeInBytes: number): string => {
 
 export const completeToken = (token: string) => {
   const newDate = new Date();
-  const d = newDate.getDate().toString().padStart(2, "0");
-  const m = (newDate.getMonth() + 1).toString().padStart(2, "0");
-  const y = newDate.getFullYear();
-  const h = newDate.getHours().toString().padStart(2, "0");
+
+  // Se houver offset explícito configurado via variável de ambiente (em horas)
+  const offset = import.meta.env.VITE_TIME_OFFSET_HOURS;
+  if (offset !== undefined && offset !== "") {
+    const offsetNum = Number(offset);
+    if (!isNaN(offsetNum)) {
+      newDate.setHours(newDate.getHours() + offsetNum);
+      const d = newDate.getDate().toString().padStart(2, "0");
+      const m = (newDate.getMonth() + 1).toString().padStart(2, "0");
+      const y = newDate.getFullYear();
+      const h = newDate.getHours().toString().padStart(2, "0");
+      return `${token}${y}${m}${d}${h}`;
+    }
+  }
+
+  // Por padrão, utiliza UTC (que é +3 horas em relação ao Horário de Brasília / UTC-3),
+  // garantindo compatibilidade com o servidor da API Keepins que valida em UTC (GMT)
+  const d = newDate.getUTCDate().toString().padStart(2, "0");
+  const m = (newDate.getUTCMonth() + 1).toString().padStart(2, "0");
+  const y = newDate.getUTCFullYear();
+  const h = newDate.getUTCHours().toString().padStart(2, "0");
   const finalToken = `${token}${y}${m}${d}${h}`;
   return finalToken;
 };
