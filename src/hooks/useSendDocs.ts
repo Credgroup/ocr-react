@@ -7,6 +7,10 @@ import { getFetchHeaders, log } from "@/lib/utils";
 
 const uploadDoc = async (doc: Doc, auth: any) => {
   const header = getFetchHeaders("multipart/form-data");
+  // TESTE TEMPORÁRIO: envia a requisição sem o header Authorization
+  if (header.headers) {
+    delete (header.headers as Record<string, unknown>).Authorization;
+  }
 
   log("Estrutura do documento: " + doc.CampoApi);
   log(doc);
